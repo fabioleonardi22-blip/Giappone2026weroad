@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giappone Zen — Travel Diary Operativo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null; document.write('<script src=\'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js\'><\/script>')"></script>
+<style>
+  :root{
+    --navy:#0F2A3D;
+    --navy-deep:#091A26;
+    --sand:#FAF7F2;
+    --coral:#FF5A36;
+    --coral-deep:#E23F1F;
+    --jade:#2F8F6B;
+    --gold:#D9A441;
+    --line: rgba(15,42,61,0.12);
+    --text: #1A2B33;
+    --text-soft: rgba(26,43,51,0.65);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--sand);
+    color: var(--text);
+    line-height:1.5;
+  }
+  h1,h2,h3,h4{
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    margin:0;
+    letter-spacing: -0.01em;
+  }
+
+  /* HERO */
+  .hero{
+    background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 65%);
+    color: var(--sand);
+    padding: 56px 24px 72px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:-120px; top:-140px;
+    width:420px; height:420px;
+    border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,90,54,0.35), transparent 70%);
+  }
+  .brandbar{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1040px; margin:0 auto 40px; position:relative; z-index:2;
+    flex-wrap:wrap; gap:12px;
+  }
+  .brandmark{
+    display:flex; align-items:baseline; gap:8px;
+  }
+  .brandmark .we{
+    font-family: Georgia, serif;
+    font-weight:700; font-size:20px; letter-spacing:0.02em;
+    color: var(--coral);
+  }
+  .brandmark .road{
+    font-family: Georgia, serif;
+    font-weight:700; font-size:20px; letter-spacing:0.02em;
+    color: var(--sand);
+  }
+  .brandmark small{
+    font-size:11px; color: rgba(250,247,242,0.55); font-weight:400; letter-spacing:0.03em;
+  }
+  .doctype{
+    font-size:12px; color: rgba(250,247,242,0.6);
+    border:1px solid rgba(250,247,242,0.25);
+    padding:6px 12px; border-radius:99px;
+  }
+  .hero-body{ max-width:1040px; margin:0 auto; position:relative; z-index:2; }
+  .hero h1{ font-size: clamp(34px, 5vw, 54px); max-width:680px; }
+  .hero p.sub{
+    margin-top:14px; max-width:560px; color: rgba(250,247,242,0.75); font-size:16px;
+  }
+  .route-strip{
+    margin-top:36px; display:flex; flex-wrap:wrap; gap:0;
+    border-top:1px solid rgba(250,247,242,0.2);
+    padding-top:22px;
+  }
+  .route-strip .stop{
+    font-size:13px; color: rgba(250,247,242,0.85);
+    padding-right:16px; margin-right:16px; border-right:1px solid rgba(250,247,242,0.25);
+    white-space:nowrap;
+  }
+  .route-strip .stop:last-child{ border-right:none; }
+  .route-strip .stop b{ display:block; font-size:13px; color: var(--sand); }
+  .route-strip .stop span{ font-size:11px; color: rgba(250,247,242,0.5); }
+
+  /* NAV / TABS */
+  .tabs-wrap{
+    position: sticky; top:0; z-index:10;
+    background: var(--sand);
+    border-bottom:1px solid var(--line);
+  }
+  .tabs{
+    max-width:1040px; margin:0 auto; padding: 10px 24px;
+    display:flex; gap:6px; overflow-x:auto; scrollbar-width:thin;
+  }
+  .tab-btn{
+    flex:0 0 auto;
+    border:1px solid var(--line);
+    background: #fff;
+    color: var(--text-soft);
+    font-size:13px; font-weight:600;
+    padding:8px 14px; border-radius:99px;
+    cursor:pointer; transition: all .15s ease;
+    white-space:nowrap;
+    font-family:inherit;
+  }
+  .tab-btn:hover{ border-color: var(--coral); color: var(--coral-deep); }
+  .tab-btn.active{
+    background: var(--navy); color: var(--sand); border-color: var(--navy);
+  }
+
+  /* MAIN */
+  main{ max-width:1040px; margin:0 auto; padding: 40px 24px 100px; }
+  .panel{ display:none; animation: fade .25s ease; }
+  .panel.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  /* OVERVIEW */
+  .quickview-table{ width:100%; border-collapse:collapse; margin-top:20px; font-size:14px;}
+  .quickview-table th{
+    text-align:left; font-size:11px; text-transform:none; color: var(--text-soft);
+    padding:8px 10px; border-bottom:1px solid var(--line);
+  }
+  .quickview-table td{ padding:10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  .quickview-table tr:hover td{ background: rgba(255,90,54,0.05); }
+  .daybadge{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:30px; height:30px; border-radius:8px;
+    background: var(--navy); color:var(--sand); font-weight:700; font-size:12px;
+  }
+  .destchip{
+    display:inline-block; font-size:11px; padding:3px 9px; border-radius:99px;
+    background: rgba(47,143,107,0.12); color: var(--jade); font-weight:600; margin-top:4px;
+  }
+  .map-embed{
+    width:100%; height:360px; border:1px solid var(--line); border-radius:12px; margin-top:24px;
+    filter: saturate(0.9);
+  }
+  .note-box{
+    margin-top:24px; background: rgba(217,164,65,0.12); border:1px solid rgba(217,164,65,0.35);
+    border-radius:10px; padding:14px 16px; font-size:13.5px; color: #6b4d10;
+  }
+
+  /* DAY LAYOUT */
+  .day-head{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .day-head h2{ font-size:28px; }
+  .day-head .destchip{ position:relative; top:-2px; }
+  .day-sub{ color: var(--text-soft); margin-top:4px; font-size:14.5px; }
+
+  .grid{
+    display:grid; grid-template-columns: 1.3fr 1fr; gap:28px; margin-top:28px;
+  }
+  @media (max-width: 760px){ .grid{ grid-template-columns: 1fr; } }
+
+  .timeline{ list-style:none; margin:0; padding:0; border-left:2px solid var(--line); }
+  .timeline li{
+    position:relative; padding: 0 0 22px 22px;
+  }
+  .timeline li::before{
+    content:""; position:absolute; left:-6px; top:4px;
+    width:10px; height:10px; border-radius:50%;
+    background: var(--coral); border:2px solid var(--sand); box-shadow:0 0 0 1px var(--coral);
+  }
+  .timeline .time{ font-size:12.5px; font-weight:700; color: var(--navy); letter-spacing:0.02em;}
+  .timeline .desc{ font-size:14.5px; margin-top:3px; }
+  .timeline .icon{ margin-right:4px; }
+
+  .side-card{
+    background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 18px 8px;
+    margin-bottom:18px;
+  }
+  .side-card h4{ font-size:13px; text-transform:uppercase; letter-spacing:0.06em; color: var(--text-soft); margin-bottom:10px; font-family:inherit; }
+  .side-card p, .side-card li{ font-size:14px; }
+  .side-card ul{ padding-left:18px; margin-top:0; }
+  .contact-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 0; border-bottom:1px dashed var(--line); font-size:13.5px;
+  }
+  .contact-row:last-child{ border-bottom:none; }
+  .contact-row a{ color: var(--jade); text-decoration:none; font-weight:600; }
+  .tag-optional{ color:var(--coral-deep); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em;}
+  .tag-todo{ color:var(--navy); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em;}
+
+  .daymap{ width:100%; height:220px; border:0; border-radius:12px; }
+
+  .prevnext{
+    display:flex; justify-content:space-between; margin-top:36px; gap:12px;
+  }
+  .navbtn{
+    flex:1; border:1px solid var(--line); background:#fff; border-radius:10px;
+    padding:12px 16px; cursor:pointer; text-align:left; font-family:inherit;
+  }
+  .navbtn:hover{ border-color:var(--navy); }
+  .navbtn .lbl{ font-size:11px; color:var(--text-soft); text-transform:uppercase; letter-spacing:0.05em;}
+  .navbtn .val{ font-size:15px; font-weight:700; margin-top:2px; }
+  .navbtn.right{ text-align:right; }
+
+  /* CHECKLIST */
+  .checklist{ list-style:none; padding:0; margin:0; }
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);
+    font-size:14.5px; cursor:pointer;
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist input{ margin-top:3px; accent-color: var(--jade); width:16px; height:16px; }
+  .checklist li.done .lbl{ text-decoration: line-through; color: var(--text-soft); }
+
+  .contacts-table{ width:100%; border-collapse:collapse; font-size:13.5px; margin-top:8px;}
+  .contacts-table td{ padding:8px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .contacts-table td.lbl{ color:var(--text-soft); width:40%; }
+
+  footer{
+    text-align:center; padding:30px 24px 50px; color: var(--text-soft); font-size:12.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="brandbar">
+    <div class="brandmark">
+      <span style="background:#fff; border-radius:8px; padding:6px 10px; display:inline-flex; align-items:center;"><img src="data:image/png;base64,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" alt="WeRoad" style="height:20px; width:auto; display:block;" /></span>
+      <small style="margin-left:4px;">stile di viaggio · gruppo</small>
+    </div>
+    <div class="doctype">Travel Diary Operativo</div>
+  </div>
+  <div class="hero-body">
+    <h1>Giappone Zen</h1>
+    <p class="sub">11 giorni tra Tokyo, il Monte Takao, Hakone, Kyoto, il cammino del Kumano Kodo, Ise e Osaka. Programma operativo con orari, contatti e note per il coordinatore.</p>
+    <div class="route-strip" id="routeStrip"></div>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<main>
+  <div class="panel active" id="panel-overview">
+    <h2>Panoramica del viaggio</h2>
+    <p class="day-sub">Il programma può subire variazioni per voli, meteo e disponibilità delle attività. Gli orari dei giorni di trekking (Day 7 e Day 8) dipendono dal passo del gruppo.</p>
+
+    <div id="routeMap" style="height:420px; border-radius:4px; border:1px solid var(--line); margin-bottom:8px;"></div>
+    <p class="day-sub" style="font-size:.82rem; margin-bottom:14px;">Le linee mostrano la sequenza delle tappe in linea d'aria, non il tragitto stradale reale.</p>
+    <a id="fullRouteLink" href="#" target="_blank" rel="noopener" class="navbtn" style="display:inline-block; margin-top:14px; text-decoration:none;">
+      <div class="lbl">Percorso completo</div>
+      <div class="val">Apri tutte le tappe su Google Maps ↗</div>
+    </a>
+
+    <table class="quickview-table">
+      <tr><th>Day</th><th>Destinazione</th><th>Focus</th></tr>
+      <tbody id="quickviewBody"></tbody>
+    </table>
+
+    <div class="note-box">
+      🧭 Gli orari di voli, transfer e attività vanno sempre riconfermati con il coordinatore WeRoad pochi giorni prima della partenza. Documento basato sul programma ufficiale WeRoad, integrato con orari indicativi.
+    </div>
+
+    <div class="side-card" style="margin-top:28px;">
+      <h4>Checklist coordinatore — prima della partenza</h4>
+      <ul class="checklist" id="checklist"></ul>
+    </div>
+
+    <div class="side-card" style="margin-top:20px;">
+      <h4>Japan Rail Pass — cosa copre</h4>
+      <p class="day-sub" style="margin-bottom:10px;">A Tokyo: linea Yamanote, linea Chuo, linea Keihin-Tohoku, linea Sobu, linea Saikyo, linea Shonan-Shinjuku, Tokyo Monorail (Haneda–Hamamatsucho).</p>
+      <p class="day-sub">A livello nazionale: quasi tutti gli Shinkansen (esclusi Nozomi e Mizuho, che richiedono supplemento), linee regionali JR, alcuni autobus locali JR (non gli autobus espressi autostradali), il traghetto JR-West Miyajima.</p>
+      <ul>
+        <li>Validità del pass: dal giorno 3 al giorno 9.</li>
+        <li>Conversione voucher: Ticketing and Travel Service Center, Stazione di Ueno (giorno 2) — serve circa 1h e tutti i passaporti.</li>
+        <li>Da prenotare lì: posti Shinkansen Tokyo–Kyoto (giorno 4) e Shin-Osaka–Tokyo (giorno 9).</li>
+      </ul>
+    </div>
+
+    <div class="side-card" style="margin-top:20px;">
+      <h4>Ristoranti consigliati</h4>
+      <p class="day-sub" style="margin-bottom:6px;"><b>Tokyo</b></p>
+      <ul>
+        <li>Shibuya — Uobei Shibuya Dogenzaka (sushi a nastro); Ichiryu (ramen)</li>
+        <li>Shinjuku — Narisawa (cucina innovativa, stella Michelin); Omoide Yokocho (yakitori, soba)</li>
+        <li>Asakusa — Daigo (tempura); bancarelle street food vicino al Sensō-ji (es. taiyaki)</li>
+        <li>Ginza — Sukiyabashi Jiro (sushi); Ginza Kojyu (kappo)</li>
+      </ul>
+      <p class="day-sub" style="margin:14px 0 6px;"><b>Kyoto</b></p>
+      <ul>
+        <li>Gion — Gion Karyo (kaiseki); Izuu (sabazushi e piatti tradizionali)</li>
+        <li>Pontocho — Pontocho Yakiniku; Ganko Sushi</li>
+      </ul>
+    </div>
+
+    <div class="side-card" style="margin-top:20px;">
+      <h4>Cassa comune — dettaglio spese</h4>
+      <table style="width:100%; font-size:.92rem;">
+        <tr><td>Treno Monte Takao</td><td>5–7 €</td></tr>
+        <tr><td>Shinjuku night tour</td><td>7–10 €</td></tr>
+        <tr><td>Giornata a Hakone (dettaglio)</td><td>Odawara→Gora ¥670 · funicolare ¥420 · ropeway ¥2.000 · Lago Ashi ¥1.700 · bus ¥1.000<br>oppure Hakone Free Pass: 35 €</td></tr>
+        <tr><td>Bus Tanabe–Kawayu Onsen</td><td>circa 14 €</td></tr>
+        <tr><td>Trasporto bagagli</td><td>circa 15 €</td></tr>
+        <tr><td>Guida Kumano Kodo</td><td>circa 60 €</td></tr>
+        <tr><td>Bus Hongu Taisha-mae – Kii Katsuura</td><td>circa 12 €</td></tr>
+        <tr><td>Bus per Nachi</td><td>circa 7 €</td></tr>
+        <tr><td><b>Totale stimato</b></td><td><b>circa 160 €</b></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="dayPanels"></div>
+</main>
+
+<footer>Giappone Zen · Travel Diary Operativo — documento personale per il viaggio, 07–17 novembre 2026.</footer>
+
+<script>
+const DAYS = [
+  {
+    id:1, dest:"Tokyo", focus:"Arrivo a Tokyo → Asakusa → Sensō-ji → Sumida → cena → Don Quijote", map:"Senso-ji Temple, Asakusa, Tokyo, Japan",
+    schedule:[
+      ["Pomeriggio","🛬 Arrivo a Tokyo, sistemazione in autonomia. Il punto di ritrovo parte da Asakusa Station."],
+      ["17:00","👥 Welcome meeting ad Asakusa Station. Uscita consigliata verso Kaminarimon. <a href='https://www.google.com/maps/dir/?api=1&origin=Asakusa+Station,+Tokyo,+Japan&destination=Kaminarimon,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Stazione → Kaminarimon</a>"],
+      ["17:10–17:25","📸 Asakusa Culture Tourist Information Center: vista gratuita dall'ultimo piano su Kaminarimon e Nakamise. <a href='https://www.google.com/maps/dir/?api=1&origin=Kaminarimon,+Tokyo,+Japan&destination=Asakusa+Culture+Tourist+Information+Center,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["17:25–17:45","🏮 Kaminarimon: la grande Porta del Tuono, ingresso simbolico di Sensō-ji. <a href='https://www.google.com/maps/dir/?api=1&origin=Asakusa+Culture+Tourist+Information+Center,+Tokyo,+Japan&destination=Kaminarimon,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["17:45–18:15","🛍️ Nakamise-dori: circa 250 m di negozi, snack e souvenir tra Kaminarimon e Hōzōmon. <a href='https://www.google.com/maps/dir/?api=1&origin=Kaminarimon,+Tokyo,+Japan&destination=Nakamise+Shopping+Street,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["18:15–18:35","🍞 Asakusa Kagetsudō: il famoso jumbo melon pan, anticipato rispetto al tempio perché la sede principale chiude nel tardo pomeriggio. <a href='https://www.google.com/maps/dir/?api=1&origin=Nakamise+Shopping+Street,+Tokyo,+Japan&destination=Asakusa+Kagetsudo,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["18:35–19:10","⛩️ Sensō-ji: Hōzōmon, cortile principale, incenso e pagoda, illuminati fino a tarda sera. <a href='https://www.google.com/maps/dir/?api=1&origin=Asakusa+Kagetsudo,+Tokyo,+Japan&destination=Senso-ji,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["19:10–19:35","🌸 Sumida River Walk / Azuma-bashi: passeggiata verso il fiume con vista sullo skyline e il Tokyo Skytree. <a href='https://www.google.com/maps/dir/?api=1&origin=Senso-ji,+Tokyo,+Japan&destination=Azuma+Bridge,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["19:35–20:15","🍺 Hoppy Street: pausa informale pre-cena (o drink da konbini lungo il fiume). <a href='https://www.google.com/maps/dir/?api=1&origin=Azuma+Bridge,+Tokyo,+Japan&destination=Hoppy+Street,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["20:30","🍽️ Cena — Yoroiya in zona Asakusa <a href='https://www.google.com/maps/dir/?api=1&origin=Hoppy+Street,+Tokyo,+Japan&destination=Yoroiya,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>🍜 Google Maps → Yoroiya</a>, oppure Ramen Kamo to Negi Ueno-Okachimachi (serve uno spostamento in treno/metro) <a href='https://www.google.com/maps/dir/?api=1&origin=Asakusa,+Tokyo,+Japan&destination=Ramen+Kamo+to+Negi+Ueno+Okachimachi+Main+Store,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Google Maps → Kamo to Negi Ueno</a>"],
+      ["Dopo cena","🛍️ Don Quijote Asakusa (aperto 24 ore): shopping notturno, snack, souvenir, gadget. <a href='https://www.google.com/maps/dir/?api=1&origin=Yoroiya,+Tokyo,+Japan&destination=Don+Quijote+Asakusa,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"]
+    ],
+    todo:["Prenotare la cena delle 20:30 (Yoroiya o Ramen Kamo to Negi Ueno Okachimachi Main Store)."],
+    notes:[
+      "Consigliata una SIM locale o un pocket Wi-Fi dall'aeroporto: il roaming UE non copre il Giappone.",
+      "Asakusa Station è servita da Tokyo Metro Ginza Line, Toei Asakusa Line e Tobu Skytree Line; la giornata è pensata quasi interamente a piedi, zona molto compatta.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Asakusa+Station,+Tokyo,+Japan&destination=Don+Quijote+Asakusa,+Tokyo,+Japan&travelmode=walking&waypoints=Asakusa+Culture+Tourist+Information+Center,+Tokyo,+Japan%7CKaminarimon,+Tokyo,+Japan%7CNakamise+Shopping+Street,+Tokyo,+Japan%7CAsakusa+Kagetsudo,+Tokyo,+Japan%7CSenso-ji,+Tokyo,+Japan%7CAzuma+Bridge,+Tokyo,+Japan%7CHoppy+Street,+Tokyo,+Japan' target='_blank' rel='noopener'>🗺️ Apri il percorso completo della giornata su Google Maps ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:2, dest:"Tokyo", focus:"Ueno → Akihabara → pausa hotel → Shibuya → cena → Tokyo Night", map:"Shibuya Crossing, Tokyo, Japan",
+    schedule:[
+      ["08:00","🚉 Ueno Station: arrivo e colazione, punto operativo della giornata. <a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Ueno+Park,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Ueno Park</a>"],
+      ["09:00–10:15","🌳 Ueno Park: passeggiata tranquilla, possibili tappe Shinobazuno Pond e Bentendo. <a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Ueno+Park,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["09:00–10:15 (in parallelo)","🎫 JR Pass / Ticketing Center: conversione voucher e prenotazioni, servono tutti i passaporti — verificare orari aggiornati il giorno del viaggio. <a href='https://www.google.com/maps/search/?api=1&query=JR+East+Travel+Service+Center+Ueno+Station,+Tokyo,+Japan' target='_blank' rel='noopener'>🎫 Google Maps</a>"],
+      ["10:15–10:35","🚆 Ueno → Akihabara: JR Yamanote / Keihin-Tōhoku, circa 4–6 min. <a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Akihabara+Station,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Google Maps</a>"],
+      ["10:35–12:00+","🎮 Akihabara: almeno un'ora piena libera — anime, manga, elettronica, arcade, maid café. <a href='https://www.google.com/maps/dir/?api=1&origin=Akihabara+Station,+Tokyo,+Japan&destination=Akihabara,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a> <a href='https://www.google.com/maps/search/?api=1&query=maid+cafe+Akihabara+Tokyo' target='_blank' rel='noopener'>☕ Maid café</a>"],
+      ["12:00–13:30","🍣 Pranzo libero in zona Akihabara/Ueno. <a href='https://www.google.com/maps/search/?api=1&query=sushi+Akihabara+Tokyo' target='_blank' rel='noopener'>🍣 Cerca sushi</a>"],
+      ["13:30–16:00","🏨 Pausa hotel: rientro e riposo di circa due ore. <a href='https://www.google.com/maps/search/?api=1&query=Ginza+Station,+Tokyo,+Japan' target='_blank' rel='noopener'>🏨 Zona Ginza</a>"],
+      ["16:00–17:00","🚇 Ginza → Shibuya: Tokyo Metro Ginza Line, collegamento diretto. <a href='https://www.google.com/maps/dir/?api=1&origin=Ginza+Station,+Tokyo,+Japan&destination=Shibuya+Station,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚇 Google Maps</a>"],
+      ["18:00–18:05","🚶 Shibuya Scramble Crossing: foto e attraversamento dell'incrocio iconico. <a href='https://www.google.com/maps/dir/?api=1&origin=Shibuya+Station,+Tokyo,+Japan&destination=Shibuya+Scramble+Crossing,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["18:05–18:10","🐕 Hachikō Statue. <a href='https://www.google.com/maps/dir/?api=1&origin=Shibuya+Scramble+Crossing,+Tokyo,+Japan&destination=Hachiko+Statue,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["18:10–18:30","🎮 Pokémon Center Shibuya, dentro Shibuya PARCO. <a href='https://www.google.com/maps/dir/?api=1&origin=Hachiko+Statue,+Tokyo,+Japan&destination=Pokemon+Center+Shibuya,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["18:30–18:50","🟣 Gacha floor + Shibuya PARCO (rooftop se accessibile). <a href='https://www.google.com/maps/dir/?api=1&origin=Pokemon+Center+Shibuya,+Tokyo,+Japan&destination=Shibuya+PARCO,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["18:50–19:10","🌿 Miyashita Park. <a href='https://www.google.com/maps/dir/?api=1&origin=Shibuya+PARCO,+Tokyo,+Japan&destination=Miyashita+Park,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["19:10–19:30","🛍️ Shibuya 109 + Center-Gai: shopping e passeggiata nella zona più vivace. <a href='https://www.google.com/maps/dir/?api=1&origin=Miyashita+Park,+Tokyo,+Japan&destination=Shibuya+109,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>🛍️ Shibuya 109</a> <a href='https://www.google.com/maps/dir/?api=1&origin=Shibuya+109,+Tokyo,+Japan&destination=Shibuya+Center-Gai,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>🎰 Center-Gai</a>"],
+      ["19:30","🍽️ Cena — Gonpachi Shibuya (izakaya scenografico, prenotazione consigliata). <a href='https://www.google.com/maps/dir/?api=1&origin=Shibuya+Center-Gai,+Tokyo,+Japan&destination=Gonpachi+Shibuya,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>🍽️ Google Maps</a>"],
+      ["Dopo cena","🎤 Karaoke: Karaoke Kan Shibuya oppure Big Echo Shibuya Center-gai. <a href='https://www.google.com/maps/search/?api=1&query=Karaoke+Kan+Shibuya,+Tokyo' target='_blank' rel='noopener'>🎤 Karaoke Kan</a> <a href='https://www.google.com/maps/search/?api=1&query=Big+Echo+Shibuya+Center-gai,+Tokyo' target='_blank' rel='noopener'>🎤 Big Echo</a>"],
+      ["Dopo cena (alternativa)","🕹️ Weird Tokyo / Arcade: GiGO Shibuya oppure Taito Station. <a href='https://www.google.com/maps/search/?api=1&query=GiGO+Shibuya,+Tokyo' target='_blank' rel='noopener'>🎮 GiGO Shibuya</a> <a href='https://www.google.com/maps/search/?api=1&query=Taito+Station+Shibuya,+Tokyo' target='_blank' rel='noopener'>🕹️ Taito Station</a>"],
+      ["Notte","🌙 Night Tour: Nonbei Yokocho oppure Center-Gai. <a href='https://www.google.com/maps/search/?api=1&query=Nonbei+Yokocho,+Shibuya,+Tokyo' target='_blank' rel='noopener'>🏮 Nonbei Yokocho</a> <a href='https://www.google.com/maps/search/?api=1&query=Shibuya+Center-Gai,+Tokyo' target='_blank' rel='noopener'>🌃 Center-Gai</a>"]
+    ],
+    todo:["Portare tutti i passaporti per la conversione dei voucher JR Pass.","Prenotare i posti Shinkansen Tokyo–Kyoto (giorno 4) e Shin-Osaka–Tokyo (giorno 9).","Valutare la prenotazione di Gonpachi Shibuya per cena."],
+    notes:[
+      "Dalla stazione di Ueno al Ticketing Center si può arrivare anche a piedi in circa 20 minuti.",
+      "Gli orari sono organizzativi: Google Maps ricalcola treni e metro in base alla data/ora effettive. Per JR Pass e prenotazioni, verificare il servizio disponibile a Ueno il giorno del viaggio.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Shibuya+Center-Gai,+Tokyo,+Japan&travelmode=transit&waypoints=Ueno+Park,+Tokyo,+Japan%7CAkihabara+Station,+Tokyo,+Japan%7CGinza+Station,+Tokyo,+Japan%7CShibuya+Station,+Tokyo,+Japan%7CShibuya+Scramble+Crossing,+Tokyo,+Japan%7CHachiko+Statue,+Tokyo,+Japan%7CPokemon+Center+Shibuya,+Tokyo,+Japan%7CMiyashita+Park,+Tokyo,+Japan' target='_blank' rel='noopener'>🗺️ Apri il percorso completo della giornata su Google Maps ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:3, dest:"Monte Takao", focus:"Monte Takao con guida privata, poi Shinjuku", map:"Mount Takao, Hachioji, Tokyo, Japan",
+    schedule:[
+      ["07:30–08:00","🚉 Hotel → Shinjuku: Suica pronta, obiettivo arrivare alla zona Keio con margine. <a href='https://www.google.com/maps/search/?api=1&query=Keio+Shinjuku+Station+Tokyo' target='_blank' rel='noopener'>📍 Keio Shinjuku</a>"],
+      ["08:10–09:05","🚆 Shinjuku → Takaosanguchi (Keio Line), soluzione diretta/rapida più comoda. <a href='https://www.google.com/maps/dir/?api=1&origin=Keio+Shinjuku+Station,+Tokyo,+Japan&destination=Takaosanguchi+Station,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Apri tragitto</a>"],
+      ["09:05–09:20","🤝 Incontro con la guida privata a Takaosanguchi Station (verificare l'e-mail \"Re: reservation\" per il punto esatto). <a href='https://www.google.com/maps/search/?api=1&query=Takaosanguchi+Station+Tokyo' target='_blank' rel='noopener'>📍 Stazione</a>"],
+      ["09:20–09:45","🚡 Cable Car / Chair Lift da Kiyotaki Station per salire rapidamente verso la parte alta. <a href='https://www.google.com/maps/search/?api=1&query=Kiyotaki+Station+Mount+Takao' target='_blank' rel='noopener'>🚡 Kiyotaki Station</a> <a href='https://www.google.com/maps/search/?api=1&query=Mount+Takao+Chairlift' target='_blank' rel='noopener'>🪑 Chair Lift</a>"],
+      ["09:45–11:15","🥾 Trail panoramico + Yakuo-in Temple, proseguendo verso la vetta. Se la guida usa una mappa coi due percorsi rosso/verde, chiedere di salire con uno e scendere con l'altro. <a href='https://www.google.com/maps/dir/?api=1&origin=Takaosan+Station,+Tokyo,+Japan&destination=Mount+Takao+Summit,+Tokyo,+Japan&travelmode=walking&waypoints=Yakuo-in,+Tokyo,+Japan' target='_blank' rel='noopener'>🥾 Percorso verso la vetta</a>"],
+      ["11:15–12:00","⛰️ Vetta del Monte Takao (599 m): pausa panoramica, foto e snack, vista sul Fuji con buona visibilità. <a href='https://www.google.com/maps/search/?api=1&query=Mount+Takao+Summit+Tokyo' target='_blank' rel='noopener'>📍 Vetta</a>"],
+      ["12:00–13:10","⬇️ Discesa verso Takaosanguchi + street food: tororo soba, dango, tengu-yaki. <a href='https://www.google.com/maps/search/?api=1&query=restaurants+Takaosanguchi+Station+Tokyo' target='_blank' rel='noopener'>🍜 Dove mangiare</a>"],
+      ["Extra (se c'è tempo)","🐒 Monkey Park oppure 🏛️ TAKAO 599 Museum. <a href='https://www.google.com/maps/search/?api=1&query=Takao+Monkey+Park+Tokyo' target='_blank' rel='noopener'>📍 Monkey Park</a> <a href='https://www.google.com/maps/search/?api=1&query=TAKAO+599+MUSEUM' target='_blank' rel='noopener'>📍 TAKAO 599</a>"],
+      ["13:15–14:15","🚆 Takaosanguchi → Shinjuku (rientro con Keio Line). <a href='https://www.google.com/maps/dir/?api=1&origin=Takaosanguchi+Station,+Tokyo,+Japan&destination=Keio+Shinjuku+Station,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Rientro a Shinjuku</a>"],
+      ["15:00–18:00","🏙️ Pomeriggio flessibile a Shinjuku — il Day 2 copre già Shibuya, quindi conviene restare qui senza un altro trasferimento. <a href='https://www.google.com/maps/search/?api=1&query=Shinjuku+Tokyo' target='_blank' rel='noopener'>🌆 Shinjuku</a>"],
+      ["18:00–19:20","🍜 Cena strategica: se il Free Tour parte da Shinjuku, meglio cenare qui piuttosto che tornare ad Asakusa. <a href='https://www.google.com/maps/search/?api=1&query=restaurants+Shinjuku+Tokyo' target='_blank' rel='noopener'>🍜 Ristoranti Shinjuku</a>"],
+      ["19:45","🌙 Free Tour / Night Tour già prenotato — il punto d'incontro va confermato dalla prenotazione."],
+      ["Dopo il tour","🚆 Rientro diretto in hotel."]
+    ],
+    todo:["Suica pronta.","Controllare il Mount Takao Ticket (高尾山きっぷ) e confrontarlo con Suica + biglietti separati.","Verificare l'e-mail \"Re: reservation\" della guida privata.","Concordare con la guida il percorso di salita/discesa.","Scarpe comode + acqua.","Confermare il meeting point del Free Tour delle 19:45."],
+    notes:[
+      "Nel materiale iniziale comparivano sia \"cena ad Asakusa\" sia il rientro diretto a Shinjuku per il tour delle 19:45: se il Free Tour è a Shinjuku, la sequenza Takao → Shinjuku → cena → Night Tour → hotel è molto più efficiente. Evitare il rientro ad Asakusa in questo caso.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Keio+Shinjuku+Station,+Tokyo,+Japan&destination=Shinjuku,+Tokyo,+Japan&travelmode=transit&waypoints=Takaosanguchi+Station,+Tokyo,+Japan%7CMount+Takao+Summit,+Tokyo,+Japan%7CYakuo-in,+Tokyo,+Japan' target='_blank' rel='noopener'>🗺️ Apri l'itinerario completo della giornata ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:4, dest:"Hakone", focus:"Odawara → Gora → Sounzan → Ōwakudani → Lago Ashi → Hakone Shrine", map:"Owakudani, Hakone, Japan",
+    schedule:[
+      ["07:45","🚅 Tokyo/Shinagawa → Odawara con Tokaido Shinkansen (JR Pass: Hikari/Kodama; il Nozomi richiede un supplemento dedicato). <a href='https://www.google.com/maps/dir/?api=1&origin=Tokyo+Station,+Tokyo,+Japan&destination=Odawara+Station,+Kanagawa,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚅 Da Tokyo Station</a> <a href='https://www.google.com/maps/dir/?api=1&origin=Shinagawa+Station,+Tokyo,+Japan&destination=Odawara+Station,+Kanagawa,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚅 Da Shinagawa</a>"],
+      ["09:00–09:30","🧳 Odawara: bagagli (coin locker o consegna in hotel) e valutazione dell'Hakone Freepass. <a href='https://www.google.com/maps/search/?api=1&query=Odawara+Station+coin+lockers' target='_blank' rel='noopener'>🧳 Locker</a>"],
+      ["09:30–10:20","🚞 Odawara → Gora con la rete Hakone Tozan (possibile cambio a Hakone-Yumoto). <a href='https://www.google.com/maps/dir/?api=1&origin=Odawara+Station,+Kanagawa,+Japan&destination=Gora+Station,+Hakone,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚞 Apri tragitto</a>"],
+      ["10:20–10:35","🚠 Gora → Sounzan con la Hakone Tozan Cable Car. <a href='https://www.google.com/maps/dir/?api=1&origin=Gora+Station,+Hakone,+Japan&destination=Sounzan+Station,+Hakone,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚠 Google Maps</a>"],
+      ["10:35–11:00","🚡 Sounzan → Ōwakudani con la Hakone Ropeway. <a href='https://www.google.com/maps/dir/?api=1&origin=Sounzan+Station,+Hakone,+Japan&destination=Owakudani+Station,+Hakone,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚡 Google Maps</a>"],
+      ["11:00–11:45","🌋 Ōwakudani: valle vulcanica, vapori sulfurei, kuro-tamago (uova nere). <a href='https://www.google.com/maps/search/?api=1&query=Owakudani+Hakone+Japan' target='_blank' rel='noopener'>🌋 Ōwakudani</a>"],
+      ["11:45–12:15","🚡 Ōwakudani → Togendai, proseguendo con la Ropeway. <a href='https://www.google.com/maps/dir/?api=1&origin=Owakudani+Station,+Hakone,+Japan&destination=Togendai+Station,+Hakone,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚡 Google Maps</a>"],
+      ["12:20–13:00","🏴‍☠️ Crociera Togendai → Moto-Hakone (Hakone Sightseeing Cruise / Pirate Ship) sul Lago Ashi. <a href='https://www.google.com/maps/search/?api=1&query=Togendai+Port+Hakone' target='_blank' rel='noopener'>⚓ Togendai Port</a> <a href='https://www.google.com/maps/search/?api=1&query=Motohakone-ko+Hakone' target='_blank' rel='noopener'>⚓ Moto-Hakone</a>"],
+      ["13:00–14:00","🍜 Pranzo a Moto-Hakone (pasto rapido per lasciare tempo al santuario). <a href='https://www.google.com/maps/search/?api=1&query=restaurants+Moto-Hakone+Japan' target='_blank' rel='noopener'>🍜 Ristoranti</a>"],
+      ["14:00–15:10","⛩️ Hakone Shrine: il torii rosso sul lago, possibile attesa per la foto. <a href='https://www.google.com/maps/dir/?api=1&origin=Motohakone-ko,+Hakone,+Japan&destination=Hakone+Shrine,+Hakone,+Japan&travelmode=walking' target='_blank' rel='noopener'>⛩️ Percorso a piedi</a>"],
+      ["15:15–16:15","🚌 Moto-Hakone → Hakone-Yumoto in bus (lasciare margine per traffico/affluenza). <a href='https://www.google.com/maps/dir/?api=1&origin=Moto-Hakone,+Hakone,+Japan&destination=Hakone-Yumoto+Station,+Hakone,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚌 Google Maps</a>"],
+      ["Dalle 16:30","♨️ Se si pernotta ad Hakone: check-in, onsen e cena kaiseki (Hakone-Yumoto, Gora o Lago Ashi). <a href='https://www.google.com/maps/search/?api=1&query=onsen+Hakone-Yumoto+Japan' target='_blank' rel='noopener'>♨️ Onsen Hakone-Yumoto</a>"]
+    ],
+    todo:["Attivare il Japan Rail Pass per questa giornata.","Prenotare/controllare lo Shinkansen per Odawara.","Puntare ad arrivare a Odawara entro le 09:00–09:30.","Sistemare o spedire i bagagli.","Valutare l'Hakone Freepass da Odawara.","Controllare lo stato di Ropeway e crociera prima di partire."],
+    notes:[
+      "Il Nozomi non è \"vietato\": con il JR Pass standard va acquistato un supplemento dedicato. Per Odawara conviene scegliere direttamente Hikari/Kodama.",
+      "Biglietti singoli di riferimento: Odawara→Gora ¥670 · Gora→Sounzan ¥420 · Ropeway ¥2.000 · crociera ¥1.700 · bus ¥1.000 (valori di pianificazione, ricontrollare le tariffe ufficiali). L'Hakone Freepass resta l'opzione più semplice per l'intero circuito; il JR Pass copre solo l'arrivo fino a Odawara.",
+      "Piano B meteo: Ropeway e crociera possono sospendersi con maltempo — controllare lo stato dei servizi la mattina stessa e, in caso, ripianificare con i bus.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Odawara+Station,+Kanagawa,+Japan&destination=Hakone-Yumoto+Station,+Hakone,+Japan&travelmode=transit&waypoints=Gora+Station,+Hakone,+Japan%7CSounzan+Station,+Hakone,+Japan%7COwakudani,+Hakone,+Japan%7CTogendai,+Hakone,+Japan%7CMoto-Hakone,+Hakone,+Japan%7CHakone+Shrine,+Hakone,+Japan' target='_blank' rel='noopener'>🗺️ Apri il giro completo su Google Maps ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:5, dest:"Kyoto", focus:"Nishiki Market, centro, Fushimi Inari e Gion by night", map:"Fushimi Inari Taisha, Kyoto, Japan",
+    schedule:[
+      ["10:00","🧳 Arrivo a Kyoto Station (idealmente entro le 10:00–10:30): bagagli in hotel o nei coin locker; konbini se serve recuperare tempo. <a href='https://www.google.com/maps/search/?api=1&query=Kyoto+Station+coin+lockers' target='_blank' rel='noopener'>🧳 Coin locker</a>"],
+      ["10:30","🚇 Kyoto Station → Nishiki Market. <a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Nishiki+Market,+Kyoto,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚇 Apri tragitto</a>"],
+      ["11:00","🍡 Nishiki Market: mercato coperto storico, 1–1.5h, meglio piccoli assaggi che un pranzo lungo. <a href='https://www.google.com/maps/search/?api=1&query=Nishiki+Market+Kyoto' target='_blank' rel='noopener'>📍 Nishiki Market</a>"],
+      ["12:30","🚶 Shijo · Kawaramachi · fiume Kamo: passeggiata libera, shopping o pausa caffè (accorciabile in caso di ritardo). <a href='https://www.google.com/maps/dir/?api=1&origin=Nishiki+Market,+Kyoto,+Japan&destination=Shijo+Kawaramachi,+Kyoto,+Japan&travelmode=walking' target='_blank' rel='noopener'>🚶 Passeggiata</a>"],
+      ["13:30","🚆 Centro → Fushimi Inari: JR Nara Line fino a Inari Station, proprio davanti al santuario. <a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Inari+Station,+Kyoto,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Kyoto → Inari</a>"],
+      ["14:00","⛩️ Fushimi Inari Taisha (highlight della giornata): 2–3h se si vuole salire molto, non è obbligatorio arrivare in cima. <a href='https://www.google.com/maps/dir/?api=1&origin=Inari+Station,+Kyoto,+Japan&destination=Fushimi+Inari+Taisha,+Kyoto,+Japan&travelmode=walking' target='_blank' rel='noopener'>⛩️ Santuario</a> <a href='https://www.google.com/maps/search/?api=1&query=Yotsutsuji+Fushimi+Inari+Kyoto' target='_blank' rel='noopener'>🌄 Yotsutsuji viewpoint</a>"],
+      ["17:00","🚆 Rientro + hotel + doccia, blocco volutamente elastico. <a href='https://www.google.com/maps/dir/?api=1&origin=Fushimi+Inari+Taisha,+Kyoto,+Japan&destination=Kyoto+Station,+Kyoto,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Rientro verso Kyoto</a>"],
+      ["19:00","🏮 Gion by night: Hanamikoji, Yasaka Shrine e vicoli tradizionali, poi cena in zona. <a href='https://www.google.com/maps/dir/?api=1&origin=Gion-Shijo+Station,+Kyoto,+Japan&destination=Yasaka+Shrine,+Kyoto,+Japan&travelmode=walking&waypoints=Hanamikoji+Street,+Kyoto,+Japan' target='_blank' rel='noopener'>🏮 Passeggiata Gion</a> <a href='https://www.google.com/maps/search/?api=1&query=restaurants+Gion+Kyoto' target='_blank' rel='noopener'>🍜 Cena a Gion</a>"]
+    ],
+    todo:["Controllare lo Shinkansen Odawara → Kyoto (Hikari 06:56→09:06 ~2h10, Kodama 07:35→10:34 ~2h59, Hikari 08:07→10:12 ~2h05, Kodama 08:35→11:34 ~2h59 — preferire un Hikari mattutino se disponibile)."],
+    optional:["Nijo Castle come sostituzione (non aggiunta) al Fushimi Inari, per chi l'avesse già visitato."],
+    notes:[
+      "Arashiyama (bosco di bambù) e Kinkaku-ji non sono previsti oggi: renderebbero la giornata troppo dispersiva; da valutare eventualmente in un'altra giornata.",
+      "Se il treno arriva dopo le 10:30: accorciare Nishiki/Kawaramachi e mantenere come priorità Fushimi Inari + Gion serale.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Yasaka+Shrine,+Kyoto,+Japan&travelmode=transit&waypoints=Nishiki+Market,+Kyoto,+Japan%7CShijo+Kawaramachi,+Kyoto,+Japan%7CFushimi+Inari+Taisha,+Kyoto,+Japan%7CGion,+Kyoto,+Japan%7CHanamikoji+Street,+Kyoto,+Japan' target='_blank' rel='noopener'>🗺️ Apri il giro completo di Kyoto ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:6, dest:"Kawayu Onsen", focus:"Kyoto → Kii-Tanabe → Ogigahama Beach → Kawayu Onsen", map:"Kawayu Onsen, Wakayama, Japan",
+    schedule:[
+      ["Mattina presto","🚆 Kyoto → Kii-Tanabe: tratta lunga, portare colazione/snack. <a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Kii-Tanabe+Station,+Wakayama,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Google Maps</a>"],
+      ["10:00","📍 Arrivo a Kii-Tanabe: dirigersi subito al Tanabe Tourist Information Center per bagagli e info. <a href='https://www.google.com/maps/search/?api=1&query=Tanabe+Tourist+Information+Center+Kii-Tanabe' target='_blank' rel='noopener'>ℹ️ Tourist Center</a>"],
+      ["10:20–12:15 (gruppo)","🏖️ Pax liberi a Tanabe Ogigahama Beach: passeggiata e relax. <a href='https://www.google.com/maps/dir/?api=1&origin=Kii-Tanabe+Station,+Wakayama,+Japan&destination=Tanabe+Ogigahama+Beach,+Wakayama,+Japan&travelmode=walking' target='_blank' rel='noopener'>🏖️ Vai alla spiaggia</a>"],
+      ["10:20–12:15 (coordinatore)","📋 Al Tourist Center: verificare bus dei prossimi giorni, fermate, orari, trasporto bagagli e attività, poi raggiungere il gruppo."],
+      ["12:15–12:45","🍙 Pranzo rapido + ricongiungimento, rientro verso la stazione. <a href='https://www.google.com/maps/dir/?api=1&origin=Tanabe+Ogigahama+Beach,+Wakayama,+Japan&destination=Kii-Tanabe+Station,+Wakayama,+Japan&travelmode=walking' target='_blank' rel='noopener'>🚶 Rientro alla stazione</a>"],
+      ["13:00","🚌 Kii-Tanabe → Kawayu Onsen (linea annotata: 84/verde — riconfermare numero corsa, fermata e orario al Tourist Center). <a href='https://www.google.com/maps/dir/?api=1&origin=Kii-Tanabe+Station,+Wakayama,+Japan&destination=Kawayu+Onsen,+Wakayama,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚌 Google Maps</a>"],
+      ["15:00","🏡 Arrivo a Kawayu Onsen + check-in in guesthouse. <a href='https://www.google.com/maps/search/?api=1&query=Kawayu+Onsen+Wakayama+Japan' target='_blank' rel='noopener'>📍 Kawayu Onsen</a>"],
+      ["15:30–17:30","♨️ Kawayu Onsen: esplorazione del paese e, se le condizioni lo permettono, esperienza termale lungo il fiume. <a href='https://www.google.com/maps/search/?api=1&query=Kawayu+Onsen+River+Wakayama' target='_blank' rel='noopener'>♨️ Zona onsen</a>"],
+      ["17:30–Sera","🍺 Relax e team building, programma leggero in vista dei giorni di cammino."]
+    ],
+    todo:["Preparare i pax alla lunga mattinata di trasferimento.","Al Tourist Center: verificare tutti i bus del Kumano Kodo dei giorni successivi.","Confermare dove/quando vengono consegnati i bagagli spediti."],
+    notes:[
+      "Gli orari dei bus nell'area Kumano sono determinanti e i collegamenti sono molto meno frequenti rispetto a Tokyo/Kyoto: riconfermare a Tanabe il bus per Kawayu e quelli del giorno successivo.",
+      "<a href='https://www.kumano-travel.com/en' target='_blank' rel='noopener'>Kumano Travel — sito ufficiale con tutte le info per il cammino ↗</a>",
+      "<a href='https://wakayamalocalguide.com/en/' target='_blank' rel='noopener'>Wakayama Local Guide (guide) ↗</a>",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Kawayu+Onsen,+Wakayama,+Japan&travelmode=transit&waypoints=Kii-Tanabe+Station,+Wakayama,+Japan%7CTanabe+Ogigahama+Beach,+Wakayama,+Japan' target='_blank' rel='noopener'>🗺️ Apri l'itinerario del giorno ↗</a>"
+    ],
+    contacts:[
+      ["Taxi/shuttle Higo","https://higo.0152.jp/en/taxi/"],
+      ["Hakobune (form prenotazione)","https://form.run/@hakobu-ne"],
+      ["Kuchikuma Transport (email)","mailto:kuchikumatransport@outlook.jp"],
+      ["Kuchikuma Transport (Instagram)","https://www.instagram.com/kuchikuma_transport/"]
+    ]
+  },
+  {
+    id:7, dest:"Kawayu Onsen", focus:"Trekking con guida: Hosshinmon-ōji → Kumano Hongu Taisha (andata e ritorno)", map:"Kumano Hongu Taisha, Wakayama, Japan",
+    schedule:[
+      ["Mattina","♨️ Partenza da Kawayu Onsen: colazione, zaino giornaliero, bagagli principali gestiti separatamente. <a href='https://www.google.com/maps/search/?api=1&query=Kawayu+Onsen+Wakayama+Japan' target='_blank' rel='noopener'>📍 Kawayu Onsen</a>"],
+      ["Mattina","🚐 Navetta gratuita verso il punto d'incontro con la guida (chiedere alla guida fermata esatta, orario pickup ed eventuale prenotazione)."],
+      ["Inizio trekking","⛩️ Hosshinmon-ōji: punto di partenza dell'escursione. <a href='https://www.google.com/maps/search/?api=1&query=Hosshinmon-oji+Wakayama+Japan' target='_blank' rel='noopener'>📍 Hosshinmon-ōji</a>"],
+      ["Trekking (circa mezza giornata)","🌲 Kumano Kodo Nakahechi: boschi, piccoli insediamenti e antichi luoghi di pellegrinaggio. <a href='https://it.wikiloc.com/percorsi-escursionismo/kumano-kodo-hosshinmon-oji-hasta-kumano-hongu-taisha-ruta-imperial-182161690' target='_blank' rel='noopener'>🥾 Traccia Wikiloc</a>"],
+      ["Lungo il percorso","🌿 Fushiogami-oji, una delle tappe più interessanti prima di Hongu. <a href='https://www.google.com/maps/search/?api=1&query=Fushiogami-oji+Wakayama+Japan' target='_blank' rel='noopener'>📍 Google Maps</a>"],
+      ["Pomeriggio","⛩️ Arrivo a Kumano Hongu Taisha, uno dei tre grandi santuari del Kumano Sanzan. <a href='https://www.google.com/maps/search/?api=1&query=Kumano+Hongu+Taisha+Wakayama+Japan' target='_blank' rel='noopener'>⛩️ Kumano Hongu Taisha</a>"],
+      ["Se resta tempo","⛩️ Oyunohara: l'antico sito di Hongu Taisha, riconoscibile dall'enorme torii. <a href='https://www.google.com/maps/dir/?api=1&origin=Kumano+Hongu+Taisha,+Wakayama,+Japan&destination=Oyunohara+Torii+Gate,+Wakayama,+Japan&travelmode=walking' target='_blank' rel='noopener'>🚶 Hongu → Oyunohara</a>"],
+      ["Fine pomeriggio","🚌 Rientro verso Kawayu Onsen: confermare il bus con la guida e la struttura. <a href='https://www.google.com/maps/dir/?api=1&origin=Kumano+Hongu+Taisha,+Wakayama,+Japan&destination=Kawayu+Onsen,+Wakayama,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚌 Google Maps</a>"],
+      ["Sera","♨️ Onsen e serata tranquilla: dopo il trekking, niente programma aggiuntivo."]
+    ],
+    todo:["Contattare la guida la sera prima per orario, punto d'incontro e navetta.","Verificare se serve un pranzo al sacco.","Controllare le previsioni meteo.","Confermare il bus di rientro prima di iniziare il trekking."],
+    notes:[
+      "Trekking di circa mezza giornata su terreno collinare: il percorso può essere scivoloso con la pioggia, seguire le indicazioni della guida su equipaggiamento ed eventuali modifiche.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Hosshinmon-oji,+Wakayama,+Japan&destination=Oyunohara+Torii+Gate,+Wakayama,+Japan&travelmode=walking&waypoints=Fushiogami-oji,+Wakayama,+Japan%7CKumano+Hongu+Taisha,+Wakayama,+Japan' target='_blank' rel='noopener'>🗺️ Apri il percorso del trekking ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:8, dest:"Nachi", focus:"Daimonzaka, Nachi Taisha, Nachi Falls e notte al Temple Hotel Daitai-ji", map:"Kumano Nachi Taisha, Wakayama, Japan",
+    schedule:[
+      ["Mattina","🚌 Bus pubblico n. 31 verso Kumano Nachi Grand Shrine (riconfermare numero linea, fermata di partenza e orario sul posto). <a href='https://www.google.com/maps/search/?api=1&query=Kumano+Nachi+Taisha+Wakayama+Japan' target='_blank' rel='noopener'>⛩️ Destinazione Nachi</a>"],
+      ["Mattina","🌲 Daimonzaka: la scalinata nel bosco, uno degli accessi più scenografici all'area sacra di Nachi (se compatibile con guida e bus). <a href='https://www.google.com/maps/search/?api=1&query=Daimonzaka+Wakayama+Japan' target='_blank' rel='noopener'>🌲 Daimonzaka</a>"],
+      ["","⛩️ Kumano Nachi Taisha, uno dei tre santuari principali del Kumano Sanzan. <a href='https://www.google.com/maps/search/?api=1&query=Kumano+Nachi+Taisha+Wakayama+Japan' target='_blank' rel='noopener'>📍 Kumano Nachi Taisha</a>"],
+      ["","🏯 Seiganto-ji, subito vicino: da qui la celebre vista della pagoda con la cascata di Nachi sullo sfondo. <a href='https://www.google.com/maps/search/?api=1&query=Seiganto-ji+Wakayama+Japan' target='_blank' rel='noopener'>🏯 Seiganto-ji</a>"],
+      ["Tarda mattina","💧 Nachi Falls: la grande cascata simbolo della zona. <a href='https://www.google.com/maps/search/?api=1&query=Nachi+Falls+Wakayama+Japan' target='_blank' rel='noopener'>💧 Nachi Falls</a>"],
+      ["Pranzo","🍙 Pausa leggera nella zona di Nachi, con elasticità sull'orario. <a href='https://www.google.com/maps/search/?api=1&query=restaurants+near+Kumano+Nachi+Taisha' target='_blank' rel='noopener'>🍜 Dove mangiare</a>"],
+      ["Pomeriggio","🚌 Nachi → Temple Hotel Daitai-ji: contattare la struttura prima del viaggio per la combinazione treno/bus o un eventuale pickup. <a href='https://www.google.com/maps/dir/?api=1&origin=Kumano+Nachi+Taisha,+Wakayama,+Japan&destination=Temple+Hotel+Daitai-ji,+Wakayama,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚌 Google Maps</a>"],
+      ["Tardo pomeriggio","🛕 Check-in al Temple Hotel Daitai-ji: non solo una notte tecnica, lasciare spazio per l'esperienza del tempio. <a href='https://www.google.com/maps/search/?api=1&query=Temple+Hotel+Daitai-ji+Wakayama+Japan' target='_blank' rel='noopener'>🛕 Apri su Maps</a>"],
+      ["19:00","🍽️ Cena (inclusa)."],
+      ["20:30","🧘 Meditazione o Night Sutra Copying con i monaci."]
+    ],
+    todo:["Prenotare/confermare la guida per il trekking di oggi.","Verificare il bus pubblico n. 31.","Definire dove lasciare i bagagli principali: camminare con il solo zaino giornaliero.","Telefonare al Daitai-ji prima del viaggio: orario massimo di check-in, modo migliore per arrivare da Nachi, eventuale pickup, bagagli, cena, colazione e attività disponibili."],
+    notes:[
+      "Non fissare il rientro serale al tempio basandosi solo su una linea bus annotata in anticipo: nell'area Kumano i collegamenti sono limitati, quindi trasporto, ultimo collegamento utile e orario di check-in vanno chiariti prima del trekking.",
+      "Alloggio spartano, non garantita divisione maschi/femmine.",
+      "<a href='https://www.komoot.com/discover/Selected_location_on_map/@33.6729355,135.8865208/tours?sport=hike&map=true&max_distance=4820&pageNumber=1' target='_blank' rel='noopener'>🥾 Traccia di riferimento su Komoot (da confermare con la guida) ↗</a>",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Daimonzaka,+Wakayama,+Japan&destination=Nachi+Falls,+Wakayama,+Japan&travelmode=walking&waypoints=Kumano+Nachi+Taisha,+Wakayama,+Japan%7CSeiganto-ji,+Wakayama,+Japan' target='_blank' rel='noopener'>🗺️ Apri il percorso di Nachi ↗</a>"
+    ],
+    contacts:[
+      ["Temple Hotel Daitai-ji","tel:+818027813483"]
+    ]
+  },
+  {
+    id:9, dest:"Ise", focus:"Daitai-ji → Taiji → Ise Jingu → Futami e Meoto Iwa", map:"Ise Jingu Naiku, Ise, Mie, Japan",
+    schedule:[
+      ["Mattina presto (da concordare)","🛕 Risveglio al Temple Hotel Daitai-ji e attività concordate con la struttura (gli orari dipendono dall'esperienza prenotata). <a href='https://oterastay.com/en/daitaiji/experience/' target='_blank' rel='noopener'>🧘 Attività Daitai-ji</a>"],
+      ["Dopo le attività","🚕 Daitai-ji → Taiji Station in taxi (prenotato in anticipo), con margine prima del treno. <a href='https://www.google.com/maps/dir/?api=1&origin=Temple+Hotel+Daitai-ji,+Wakayama,+Japan&destination=Taiji+Station,+Wakayama,+Japan&travelmode=driving' target='_blank' rel='noopener'>🚕 Apri tragitto</a>"],
+      ["Trasferimento (orario da riconfermare)","🚆 Taiji → Ise in treno. La tratta è indicata come coperta dal JR Pass, ma verificare cambi e operatori mostrati per ciascuna tratta prima di salire. <a href='https://maps.app.goo.gl/B98svR89XJNAnwUN8' target='_blank' rel='noopener'>🚆 Treno consigliato</a> <a href='https://www.google.com/maps/dir/?api=1&origin=Taiji+Station,+Wakayama,+Japan&destination=Iseshi+Station,+Mie,+Japan&travelmode=transit' target='_blank' rel='noopener'>🗺️ Taiji → Iseshi</a>"],
+      ["Arrivo a Ise","🧳 Iseshi Station: bagagli in hotel se comodo, altrimenti coin locker. <a href='https://www.google.com/maps/search/?api=1&query=Iseshi+Station+coin+lockers' target='_blank' rel='noopener'>🧳 Locker Iseshi</a>"],
+      ["Primo pomeriggio","⛩️ Ise Jingu (Naiku): visita compatibile con il tempo realmente disponibile, senza correre. <a href='https://www.google.com/maps/search/?api=1&query=Ise+Jingu+Naiku+Mie+Japan' target='_blank' rel='noopener'>⛩️ Ise Jingu · Naiku</a>"],
+      ["A seguire (se c'è tempo)","🏮 Oharaimachi + Okage Yokocho: snack, negozietti e atmosfera di Ise (riducibile se il treno arriva tardi). <a href='https://www.google.com/maps/search/?api=1&query=Okage+Yokocho+Ise+Japan' target='_blank' rel='noopener'>🏮 Okage Yokocho</a>"],
+      ["Pomeriggio","🚆 Ise → Futami in treno, poi a piedi verso il mare. <a href='https://www.google.com/maps/dir/?api=1&origin=Iseshi+Station,+Mie,+Japan&destination=Futaminoura+Station,+Mie,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Iseshi → Futaminoura</a>"],
+      ["Pomeriggio slow","⛩️ Futami Okitama Shrine: visita tranquilla del santuario sul mare, senza tabella di marcia. <a href='https://www.google.com/maps/dir/?api=1&origin=Futaminoura+Station,+Mie,+Japan&destination=Futami+Okitama+Shrine,+Mie,+Japan&travelmode=walking' target='_blank' rel='noopener'>⛩️ Vai al santuario</a>"],
+      ["Relax","🌊 Meoto Iwa (le rocce sposate) + lungomare: tempo libero, eventuale bagno solo se stagione e condizioni lo consentono. <a href='https://www.google.com/maps/search/?api=1&query=Meoto+Iwa+Ise+Japan' target='_blank' rel='noopener'>🌊 Meoto Iwa</a>"],
+      ["Sera","🚆 Futami → Ise, check-in/recupero e cena vicino all'alloggio, senza altre visite in programma. <a href='https://www.google.com/maps/dir/?api=1&origin=Futaminoura+Station,+Mie,+Japan&destination=Iseshi+Station,+Mie,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Rientro a Ise</a> <a href='https://www.google.com/maps/search/?api=1&query=restaurants+near+Iseshi+Station+Mie+Japan' target='_blank' rel='noopener'>🍜 Cena</a>"]
+    ],
+    todo:["Concordare con il tempio le attività mattutine effettivamente disponibili per il gruppo.","Confermare l'orario di check-out.","Prenotare il taxi Daitai-ji → Taiji Station.","Ricontrollare il treno Taiji → Ise e la reale copertura del JR Pass."],
+    notes:[
+      "Priorità del giorno: 1) attività al Daitai-ji, 2) treno per Ise, 3) Ise Jingu, 4) Futami Okitama Shrine, 5) relax sul mare. Se si è in ritardo, ridurre Okage Yokocho — non comprimere Futami, che è il momento di decompressione della giornata.",
+      "Non dare per scontato che ogni tratta sia coperta dal JR Pass solo perché il viaggio parte su una linea JR: se Google Maps propone operatori non-JR, verificare supplementi o biglietti separati.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Iseshi+Station,+Mie,+Japan&destination=Meoto+Iwa,+Mie,+Japan&travelmode=transit&waypoints=Ise+Jingu+Naiku,+Mie,+Japan%7CFutaminoura+Station,+Mie,+Japan%7CFutami+Okitama+Shrine,+Mie,+Japan' target='_blank' rel='noopener'>🗺️ Apri l'itinerario di Ise ↗</a>"
+    ],
+    contacts:[]
+  },
+  {
+    id:10, dest:"Nara / Osaka", focus:"Giornata a scelta: Ise → Nara + Osaka oppure Ise → Osaka diretta", map:"Dotonbori, Osaka, Japan",
+    schedule:[
+      ["Mattina","🧳 Check-out da Ise: colazione, check-out e partenza. Dividere il gruppo tra Opzione A (Nara + Osaka) e Opzione B (Osaka diretta), definendo già luogo e orario del ritrovo serale. <a href='https://www.google.com/maps/search/?api=1&query=Iseshi+Station+Mie+Japan' target='_blank' rel='noopener'>🚉 Iseshi Station</a>"],
+      ["Opzione A","🦌 Ise → Nara: consigliata a chi non ha mai visto Nara. <a href='https://www.google.com/maps/dir/?api=1&origin=Iseshi+Station,+Mie,+Japan&destination=Nara+Station,+Nara,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Ise → Nara</a>"],
+      ["Opzione B","🏙️ Ise → Osaka diretta: bagagli in hotel e pomeriggio senza programma obbligatorio. <a href='https://www.google.com/maps/dir/?api=1&origin=Iseshi+Station,+Mie,+Japan&destination=Osaka+Namba,+Osaka,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Ise → Osaka</a>"],
+      ["Opzione A","🦌 Nara Park: la guida ottimizza il percorso in base al tempo davvero disponibile. <a href='https://www.google.com/maps/search/?api=1&query=Nara+Park+Japan' target='_blank' rel='noopener'>🦌 Nara Park</a>"],
+      ["Opzione A","🛕 Tōdai-ji, se incluso nel programma con la guida — meglio non aggiungere troppe attrazioni. <a href='https://www.google.com/maps/search/?api=1&query=Todai-ji+Nara+Japan' target='_blank' rel='noopener'>🛕 Tōdai-ji</a>"],
+      ["Opzione A · pomeriggio","🚆 Nara → Osaka: si raggiunge il resto del gruppo già in città. <a href='https://www.google.com/maps/dir/?api=1&origin=Nara+Station,+Nara,+Japan&destination=Osaka+Namba,+Osaka,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Nara → Osaka</a>"],
+      ["Opzione B · pomeriggio","🗺️ Osaka completamente libera: bagagli in hotel, poi free time senza programma obbligatorio — shopping, quartieri, caffè, relax. Idee: <a href='https://www.google.com/maps/search/?api=1&query=Osaka+Castle+Japan' target='_blank' rel='noopener'>🏯 Osaka Castle</a> <a href='https://www.google.com/maps/search/?api=1&query=Den+Den+Town+Osaka' target='_blank' rel='noopener'>🎮 Den Den Town</a> <a href='https://www.google.com/maps/search/?api=1&query=Shinsaibashi+Osaka' target='_blank' rel='noopener'>🛍️ Shinsaibashi</a> <a href='https://www.google.com/maps/search/?api=1&query=Shinsekai+Osaka' target='_blank' rel='noopener'>🗼 Shinsekai</a>"],
+      ["Sera (tutti insieme)","🐙 Dōtonbori: ritrovo di tutto il gruppo, Glico Running Man, canale, cena finale — takoyaki, okonomiyaki, kushikatsu o izakaya. <a href='https://www.google.com/maps/search/?api=1&query=Dotonbori+Osaka+Japan' target='_blank' rel='noopener'>🌃 Dōtonbori</a> <a href='https://www.google.com/maps/search/?api=1&query=restaurants+Dotonbori+Osaka' target='_blank' rel='noopener'>🍜 Dove mangiare</a>"],
+      ["Dopo cena","🍻 Ultima serata a Osaka: Dōtonbori, Namba e Shinsaibashi, senza fretta di rientrare. <a href='https://www.google.com/maps/dir/?api=1&origin=Dotonbori,+Osaka,+Japan&destination=Namba,+Osaka,+Japan&travelmode=walking&waypoints=Hozenji+Yokocho,+Osaka,+Japan' target='_blank' rel='noopener'>🌙 Passeggiata serale</a>"]
+    ],
+    todo:["Chiedere ai pax chi vuole Nara e chi preferisce Osaka diretta.","Contattare in anticipo la guida di Nara (gratuita).","Concordare con la guida durata e punto di incontro.","Definire la gestione bagagli per il gruppo Nara.","Fissare fin dalla mattina un orario e un punto di incontro precisi a Osaka."],
+    notes:[
+      "Guida locale gratuita a Nara: <b>+81 80-5334-8246</b> — contattarla in anticipo per disponibilità, punto di incontro, durata e itinerario.",
+      "Se il gruppo si divide, fissare fin dalla mattina un orario e un punto di incontro preciso a Osaka: non affidarsi a \"ci sentiamo dopo\", soprattutto in caso di ritardi del gruppo Nara.",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Nara+Station,+Nara,+Japan&destination=Nara+Station,+Nara,+Japan&travelmode=walking&waypoints=Nara+Park,+Nara,+Japan%7CTodai-ji,+Nara,+Japan' target='_blank' rel='noopener'>🦌 Mappa Opzione A · Nara ↗</a>",
+      "<a href='https://www.google.com/maps/dir/?api=1&origin=Osaka+Namba,+Osaka,+Japan&destination=Dotonbori,+Osaka,+Japan&travelmode=walking' target='_blank' rel='noopener'>🏙️ Mappa Opzione B · Osaka ↗</a>"
+    ],
+    contacts:[
+      ["Guida Nara (gratuita)","tel:+818053348246"]
+    ]
+  },
+  {
+    id:11, dest:"Osaka", focus:"Check-out e partenze individuali", map:"Osaka Station, Osaka, Japan",
+    schedule:[
+      ["Mattina","🧳 Check-out (orario da confermare in hotel)."],
+      ["Giornata","✈️ Partenze individuali."]
+    ],
+    todo:[],
+    notes:["Transfer aeroporto non incluso."],
+    contacts:[]
+  }
+];
+
+const CHECKLIST = [
+  "Confermare orario e punto d'incontro del giorno 1 con il coordinatore",
+  "Confermare il Japan Rail Pass (attivazione e date)",
+  "Verificare se l'onsen di Hakone richiede prenotazione",
+  "Confermare la notte nel temple hotel di Nachi (giorno 8)",
+  "Decidere Nara o Osaka per il giorno 10 con il gruppo",
+  "Attivare una SIM locale o un pocket Wi-Fi prima della partenza",
+  "Portare contanti in Yen: molte strutture rurali non accettano carte",
+  "Verificare passaporto con validità residua di almeno 6 mesi",
+  "Salvare i contatti di emergenza (ambasciata, Farnesina) offline",
+  "Preparare scarpe da trekking già rodate per il Kumano Kodo",
+  "Confermare gli alloggi comunicati dal coordinatore 3–5 giorni prima"
+];
+
+function mapEmbed(query){
+  return "https://www.google.com/maps?q=" + encodeURIComponent(query) + "&output=embed";
+}
+
+// Route strip
+const routeStrip = document.getElementById('routeStrip');
+const uniqueStops = [];
+DAYS.forEach(d=>{ if(uniqueStops[uniqueStops.length-1] !== d.dest) uniqueStops.push(d.dest); });
+routeStrip.innerHTML = uniqueStops.map(s=>`<div class="stop"><b>${s}</b><span>tappa</span></div>`).join('');
+
+// Route points, in order (lat, lng, label, matching day ids)
+const ROUTE_POINTS = [
+  { name:"Tokyo",         lat:35.6595, lng:139.7006, days:"1–2" },
+  { name:"Monte Takao",   lat:35.6259, lng:139.2503, days:"3" },
+  { name:"Hakone",        lat:35.2048, lng:139.0254, days:"4" },
+  { name:"Kyoto",         lat:34.9677, lng:135.7792, days:"5" },
+  { name:"Kawayu Onsen",  lat:33.8132, lng:135.7725, days:"6" },
+  { name:"Kumano Hongu Taisha", lat:33.8406, lng:135.7735, days:"7" },
+  { name:"Nachi",         lat:33.6687, lng:135.8901, days:"8" },
+  { name:"Ise",           lat:34.4550, lng:136.7252, days:"9" },
+  { name:"Osaka",         lat:34.6873, lng:135.5259, days:"10–11" }
+];
+
+// Overview map: real interactive map (Leaflet + OpenStreetMap, no API key) with the route drawn between every stop
+// Wrapped defensively: if Leaflet fails to load from the CDN (ad-blocker, offline, etc.)
+// the rest of the page (tabs, day panels, checklist) must still work.
+try {
+  if (typeof L === 'undefined') throw new Error('Leaflet non caricato');
+
+  const routeMap = L.map('routeMap', { scrollWheelZoom:false });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom:18
+  }).addTo(routeMap);
+
+  const latlngs = ROUTE_POINTS.map(p => [p.lat, p.lng]);
+  L.polyline(latlngs, { color:'#FF5A36', weight:3, dashArray:'6 8', opacity:0.9 }).addTo(routeMap);
+
+  ROUTE_POINTS.forEach((p, i) => {
+    L.circleMarker([p.lat, p.lng], {
+      radius:7, color:'#0F2A3D', weight:2, fillColor:'#FF5A36', fillOpacity:1
+    }).addTo(routeMap)
+      .bindTooltip(`<b>${i+1}. ${p.name}</b><br>Day ${p.days}`, { direction:'top', offset:[0,-6] });
+  });
+
+  routeMap.fitBounds(latlngs, { padding:[30,30] });
+} catch(err) {
+  console.warn('Mappa non disponibile:', err);
+  const mapEl = document.getElementById('routeMap');
+  if (mapEl) {
+    mapEl.style.display = 'flex';
+    mapEl.style.alignItems = 'center';
+    mapEl.style.justifyContent = 'center';
+    mapEl.style.background = '#F1EEE7';
+    mapEl.innerHTML = '<span style="color:var(--text-soft); font-size:.9rem; padding:1rem; text-align:center;">Mappa non disponibile al momento — usa il pulsante qui sotto per aprire il percorso su Google Maps.</span>';
+  }
+}
+
+// Full route as a normal link (opens in Google Maps directly, not as iframe)
+document.getElementById('fullRouteLink').href =
+  "https://www.google.com/maps/dir/" +
+  ["Tokyo, Japan","Hakone, Japan","Kyoto, Japan","Kawayu Onsen, Wakayama, Japan",
+   "Nachikatsuura, Wakayama, Japan","Ise, Mie, Japan","Osaka, Japan"]
+   .map(encodeURIComponent).join("/");
+
+// Quickview table
+document.getElementById('quickviewBody').innerHTML = DAYS.map(d=>`
+  <tr onclick="selectTab(${d.id})" style="cursor:pointer">
+    <td><span class="daybadge">${d.id}</span></td>
+    <td><b>${d.dest}</b></td>
+    <td>${d.focus}<div class="destchip">Day ${d.id}</div></td>
+  </tr>
+`).join('');
+
+// Checklist
+document.getElementById('checklist').innerHTML = CHECKLIST.map((c,i)=>`
+  <li id="chk-${i}" onclick="toggleCheck(${i})">
+    <input type="checkbox" onclick="event.stopPropagation(); toggleCheck(${i})">
+    <span class="lbl">${c}</span>
+  </li>
+`).join('');
+function toggleCheck(i){
+  const li = document.getElementById('chk-'+i);
+  const box = li.querySelector('input');
+  li.classList.toggle('done');
+  box.checked = li.classList.contains('done');
+}
+
+// Tabs
+const tabsEl = document.getElementById('tabs');
+let tabsHtml = `<button class="tab-btn active" data-tab="overview" onclick="selectTab('overview')">Panoramica</button>`;
+tabsHtml += DAYS.map(d=>`<button class="tab-btn" data-tab="${d.id}" onclick="selectTab(${d.id})">Day ${d.id}</button>`).join('');
+tabsEl.innerHTML = tabsHtml;
+
+// Day panels
+const dayPanelsEl = document.getElementById('dayPanels');
+dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
+  const prev = DAYS[idx-1];
+  const next = DAYS[idx+1];
+  return `
+  <div class="panel" id="panel-${d.id}">
+    <div class="day-head">
+      <h2>Day ${d.id} · ${d.dest}</h2>
+    </div>
+    <p class="day-sub">${d.focus}</p>
+
+    <div class="grid">
+      <div>
+        <ul class="timeline">
+          ${d.schedule.map(([t,desc])=>`<li><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
+        </ul>
+      </div>
+      <div>
+        <div class="side-card" style="padding-bottom:0;">
+          <h4>Mappa</h4>
+          <iframe class="daymap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${mapEmbed(d.map)}"></iframe>
+        </div>
+        ${d.todo && d.todo.length ? `
+        <div class="side-card">
+          <h4><span class="tag-todo">To do</span></h4>
+          <ul>${d.todo.map(t=>`<li>${t}</li>`).join('')}</ul>
+        </div>` : ``}
+        ${d.optional && d.optional.length ? `
+        <div class="side-card">
+          <h4><span class="tag-optional">Opzionale</span></h4>
+          <ul>${d.optional.map(t=>`<li>${t}</li>`).join('')}</ul>
+        </div>` : ``}
+        ${d.notes && d.notes.length ? `
+        <div class="side-card">
+          <h4>Note</h4>
+          <ul>${d.notes.map(t=>`<li>${t}</li>`).join('')}</ul>
+        </div>` : ``}
+        ${d.contacts && d.contacts.length ? `
+        <div class="side-card">
+          <h4>Contatti</h4>
+          ${d.contacts.map(c=>`<div class="contact-row"><span>${c[0]}</span><a href="${c[1]}" target="_blank" rel="noopener">Apri ↗</a></div>`).join('')}
+        </div>` : ``}
+      </div>
+    </div>
+
+    <div class="prevnext">
+      ${prev ? `<button class="navbtn" onclick="selectTab(${prev.id})"><div class="lbl">← Precedente</div><div class="val">Day ${prev.id} · ${prev.dest}</div></button>` : `<div></div>`}
+      ${next ? `<button class="navbtn right" onclick="selectTab(${next.id})"><div class="lbl">Successivo →</div><div class="val">Day ${next.id} · ${next.dest}</div></button>` : `<div></div>`}
+    </div>
+  </div>`;
+}).join('');
+
+function selectTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const btn = document.querySelector(`.tab-btn[data-tab="${id}"]`);
+  if(btn){ btn.classList.add('active'); btn.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }
+  window.scrollTo({top: document.querySelector('.tabs-wrap').offsetTop, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
