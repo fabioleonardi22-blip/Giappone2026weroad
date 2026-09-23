@@ -273,6 +273,32 @@
   .navbtn .val{ font-size:15px; font-weight:700; margin-top:2px; }
   .navbtn.right{ text-align:right; }
 
+
+  /* GOOGLE MAPS BUTTONS — Day by Day */
+  .timeline .desc a[href*="google.com/maps"],
+  .timeline .desc a[href*="maps.app.goo.gl"]{
+    display:inline-flex; align-items:center; gap:6px;
+    margin:7px 6px 2px 0; padding:8px 12px;
+    border-radius:9px; background:var(--jade); color:#fff;
+    text-decoration:none; font-size:12.5px; font-weight:700;
+    line-height:1.15; box-shadow:0 2px 7px rgba(47,143,107,.18);
+    transition:transform .15s ease, filter .15s ease, box-shadow .15s ease;
+  }
+  .timeline .desc a[href*="google.com/maps"]:hover,
+  .timeline .desc a[href*="maps.app.goo.gl"]:hover{
+    filter:brightness(.92); transform:translateY(-1px);
+    box-shadow:0 4px 10px rgba(47,143,107,.24);
+  }
+  .timeline .desc a[href*="google.com/maps"]::after,
+  .timeline .desc a[href*="maps.app.goo.gl"]::after{ content:" ↗"; font-weight:800; }
+  @media (max-width:640px){
+    .timeline .desc a[href*="google.com/maps"],
+    .timeline .desc a[href*="maps.app.goo.gl"]{
+      display:flex; width:100%; justify-content:center;
+      margin:8px 0 2px; padding:10px 12px;
+    }
+  }
+
   /* CHECKLIST */
   .checklist{ list-style:none; padding:0; margin:0; }
   .checklist li{
