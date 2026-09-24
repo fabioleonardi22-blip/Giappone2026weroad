@@ -786,7 +786,7 @@ cityGrid.innerHTML = CITY_ROWS.map((row, rowIdx) => {
       ? `linear-gradient(180deg, rgba(9,26,38,0.05) 35%, rgba(9,26,38,0.75) 100%), url('${p.photo}') center/cover no-repeat`
       : CITY_GRADIENTS[globalIdx % CITY_GRADIENTS.length];
     return `<button class="city-card" style="flex:${p.count} 1 0; background:${bg}" onclick="selectTab(${firstDay})">
-      <span class="cc-day">Day ${p.days}</span>
+      <span class="cc-day">Day ${p.days} · ${DAYS[firstDay-1]?.date || ""}</span>
       <span class="cc-name">${p.name}</span>
     </button>`;
   }).join('');
