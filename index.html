@@ -345,6 +345,23 @@
     <h2>Panoramica del viaggio</h2>
     <p class="day-sub">Il programma può subire variazioni per voli, meteo e disponibilità delle attività. Gli orari dei giorni di trekking (Day 7 e Day 8) dipendono dal passo del gruppo.</p>
 
+    <section class="side-card" aria-labelledby="flights-heading" style="margin:20px 0 26px; padding:22px; border:1px solid var(--line); border-radius:14px; background:#fff;">
+      <h3 id="flights-heading" style="margin-bottom:7px;">✈️ Voli del gruppo</h3>
+      <p class="day-sub" style="margin-bottom:15px;">Orari locali del Giappone · arrivi e partenze comunicati dai partecipanti. I terminal non specificati sono da confermare.</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; min-width:680px;">
+          <thead><tr><th scope="col">Partecipanti</th><th scope="col">🛬 Arrivo</th><th scope="col">🛫 Partenza / collegamenti</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Alessio e Melania</strong></td><td>06/11/2026 · 20:50<br>Tokyo Haneda (HND) · T3</td><td>17/11/2026 · 09:20<br>Osaka Kansai (KIX) · T1</td></tr>
+            <tr><td><strong>Sara Rhouddani</strong></td><td>07/11/2026 · 13:40<br>Tokyo Narita (NRT) · T1</td><td>24/11/2026 · 19:30<br>Tokyo Narita (NRT) · T1</td></tr>
+            <tr><td><strong>Danilo Barretta</strong></td><td>07/11/2026 · 14:25<br>Tokyo Haneda (HND)</td><td>18/11/2026 · 23:25<br>Osaka Kansai (KIX)</td></tr>
+            <tr><td><strong>Giorgio Gallo</strong></td><td>07/11/2026 · 11:20<br>Tokyo Haneda (HND)</td><td>17/11/2026 · 10:30<br>Osaka Itami (ITM) → Tokyo Haneda (HND) · 13:20 (orario comunicato, da precisare se arrivo o partenza)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.85rem; margin-top:12px; color:var(--text-soft);">5 partecipanti registrati · Aeroporti di Tokyo: Haneda (HND) e Narita (NRT), distinti e distanti.</p>
+    </section>
+
     <div class="city-grid" id="cityGrid"></div>
 
     <div id="routeMap" style="height:420px; border-radius:4px; border:1px solid var(--line); margin-bottom:8px;"></div>
@@ -491,8 +508,9 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:2, date:"8 novembre", dest:"Tokyo", focus:"Ueno → Akihabara → pausa hotel → Shibuya → cena → Tokyo Night", map:"Shibuya Crossing, Tokyo, Japan",
+    id:2, date:"8 novembre", dest:"Tokyo", focus:"Ueno → Akihabara → pausa hotel → Shibuya → cena → Tokyo Night · 🎂 Compleanno di Sara Rhouddani", map:"Shibuya Crossing, Tokyo, Japan",
     schedule:[
+      ["🎂","Compleanno di Sara Rhouddani! Auguri Sara 🇯🇵🎉 Un brindisi durante la giornata in gruppo."],
       ["08:00","🚉 Ueno Station: arrivo e colazione, punto operativo della giornata. <a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Ueno+Park,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Ueno Park</a>"],
       ["09:00–10:15","🌳 Ueno Park: passeggiata tranquilla, possibili tappe Shinobazuno Pond e Bentendo. <a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Ueno+Park,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Google Maps</a>"],
       ["09:00–10:15 (in parallelo)","🎫 JR Pass / Ticketing Center: conversione voucher e prenotazioni, servono tutti i passaporti — verificare orari aggiornati il giorno del viaggio. <a href='https://www.google.com/maps/search/?api=1&query=JR+East+Travel+Service+Center+Ueno+Station,+Tokyo,+Japan' target='_blank' rel='noopener'>🎫 Google Maps</a>"],
@@ -687,8 +705,9 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:10, date:"16 novembre", dest:"Nara / Osaka", focus:"Giornata a scelta: Ise → Nara + Osaka oppure Ise → Osaka diretta", map:"Dotonbori, Osaka, Japan",
+    id:10, date:"16 novembre", dest:"Nara / Osaka", focus:"Giornata a scelta: Ise → Nara + Osaka oppure Ise → Osaka diretta · 🎂 Compleanno di Danilo Barretta", map:"Dotonbori, Osaka, Japan",
     schedule:[
+      ["🎂","Compleanno di Danilo Barretta! Auguri Danilo 🇯🇵🎉 Da festeggiare insieme durante la giornata."],
       ["08:00–08:30","🧳 Check-out da Ise: colazione, check-out e partenza. Dividere il gruppo tra Opzione A (Nara + Osaka) e Opzione B (Osaka diretta), definendo già luogo e orario del ritrovo serale. <a href='https://www.google.com/maps/search/?api=1&query=Iseshi+Station+Mie+Japan' target='_blank' rel='noopener'>🚉 Iseshi Station</a>"],
       ["08:30–11:00 circa · Opzione A","🦌 Ise → Nara: consigliata a chi non ha mai visto Nara. <a href='https://www.google.com/maps/dir/?api=1&origin=Iseshi+Station,+Mie,+Japan&destination=Nara+Station,+Nara,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Ise → Nara</a>"],
       ["08:30–11:00 circa · Opzione B","🏙️ Ise → Osaka diretta: bagagli in hotel e pomeriggio senza programma obbligatorio. <a href='https://www.google.com/maps/dir/?api=1&origin=Iseshi+Station,+Mie,+Japan&destination=Osaka+Namba,+Osaka,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Ise → Osaka</a>"],
