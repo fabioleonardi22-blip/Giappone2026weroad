@@ -329,6 +329,12 @@
   .flight-label{font-size:12px;font-weight:700;color:var(--text-soft);}
   .flight-note{font-size:13px;color:var(--text-soft);margin:13px 0 0;}
   @media(max-width:760px){.group-flights{padding:15px}.flight-person{grid-template-columns:1fr;gap:12px}.flight-person h4{font-size:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}.flight-detail{font-size:14px}}
+
+  /* Compleanni nella timeline: box rosso dedicato */
+  .timeline li.birthday-event{background:#fff0ef;border:2px solid #d93434;border-radius:12px;padding:14px 16px;margin:12px 0 18px;box-shadow:0 3px 10px rgba(180,35,35,.08);}
+  .timeline li.birthday-event .time{color:#b91c1c;font-weight:800;}
+  .timeline li.birthday-event .desc{color:#8e1b1b;font-weight:700;}
+  .timeline li.birthday-event::before{background:#d93434;border-color:#fff;}
 </style>
 </head>
 <body>
@@ -906,7 +912,7 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
     <div class="grid">
       <div>
         <ul class="timeline">
-          ${d.schedule.map(([t,desc])=>`<li><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
+          ${d.schedule.map(([t,desc])=>`<li class="${t === "🎂" ? "birthday-event" : ""}"><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
         </ul>
       </div>
       <div>
