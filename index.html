@@ -335,6 +335,12 @@
   .timeline li.birthday-event .time{color:#b91c1c;font-weight:800;}
   .timeline li.birthday-event .desc{color:#8e1b1b;font-weight:700;}
   .timeline li.birthday-event::before{background:#d93434;border-color:#fff;}
+
+  /* Hotel del Kumano: box verde distinto dagli eventi e dai compleanni */
+  .timeline li.hotel-event{background:#eaf7f1;border:2px solid #2f8f6b;border-radius:12px;padding:14px 16px;margin:12px 0 18px;box-shadow:0 3px 10px rgba(47,143,107,.09);}
+  .timeline li.hotel-event .time{color:#21694e;font-weight:800;}
+  .timeline li.hotel-event .desc{color:#174c39;font-weight:600;}
+  .timeline li.hotel-event::before{background:#2f8f6b;border-color:#fff;}
 </style>
 </head>
 <body>
@@ -624,6 +630,7 @@ const DAYS = [
   {
     id:6, date:"12 novembre", dest:"Kawayu Onsen", focus:"Kyoto → Kii-Tanabe → Ogigahama Beach → Kawayu Onsen", map:"Kawayu Onsen, Wakayama, Japan",
     schedule:[
+      ["🏨","Hotel della notte: <strong>Sansuikan Kawayu Midoriya</strong>."],
       ["10:00","🚆 <strong>Partenza per Kii-Tanabe alle 10:00.</strong> Kyoto → Kii-Tanabe: tratta lunga, portare colazione/snack. <a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Kii-Tanabe+Station,+Wakayama,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Google Maps</a>"],
       ["Arrivo a Kii-Tanabe","📍 Arrivo a Kii-Tanabe: dirigersi al Tanabe Tourist Information Center per bagagli e info. <a href='https://www.google.com/maps/search/?api=1&query=Tanabe+Tourist+Information+Center+Kii-Tanabe' target='_blank' rel='noopener'>ℹ️ Tourist Center</a>"],
       ["10:20–12:15 (gruppo)","🏖️ Pax liberi a Tanabe Ogigahama Beach: passeggiata e relax. <a href='https://www.google.com/maps/dir/?api=1&origin=Kii-Tanabe+Station,+Wakayama,+Japan&destination=Tanabe+Ogigahama+Beach,+Wakayama,+Japan&travelmode=walking' target='_blank' rel='noopener'>🏖️ Vai alla spiaggia</a>"],
@@ -651,6 +658,7 @@ const DAYS = [
   {
     id:7, date:"13 novembre", dest:"Kawayu Onsen", focus:"Trekking con guida: Hosshinmon-ōji → Kumano Hongu Taisha (andata e ritorno)", map:"Kumano Hongu Taisha, Wakayama, Japan",
     schedule:[
+      ["🏨","Hotel della notte: <strong>MAGURO BLDG by WhyKumano</strong>."],
       ["Mattina","♨️ Partenza da Kawayu Onsen: colazione, zaino giornaliero, bagagli principali gestiti separatamente. <a href='https://www.google.com/maps/search/?api=1&query=Kawayu+Onsen+Wakayama+Japan' target='_blank' rel='noopener'>📍 Kawayu Onsen</a>"],
       ["Mattina","👤 Incontro con la nostra guida <strong>Jennifer Fujino (MS)</strong> · 📞 <a href='tel:+819050933412'>+81 90-5093-3412</a>. 🚐 Navetta gratuita verso il punto d\'incontro: confermare con Jennifer fermata esatta, orario pickup ed eventuale prenotazione."],
       ["Inizio trekking","⛩️ Hosshinmon-ōji: punto di partenza dell'escursione. <a href='https://www.google.com/maps/search/?api=1&query=Hosshinmon-oji+Wakayama+Japan' target='_blank' rel='noopener'>📍 Hosshinmon-ōji</a>"],
@@ -671,6 +679,7 @@ const DAYS = [
   {
     id:8, date:"14 novembre", dest:"Kii-Katsuura", focus:"Daimonzaka, Nachi Taisha, Nachi Falls e notte al Temple Hotel Daitai-ji (Kii-Katsuura, sulla costa)", map:"Kumano Nachi Taisha, Wakayama, Japan",
     schedule:[
+      ["🏨","Hotel della notte: <strong>Temple Hotel Daitai-ji</strong>."],
       ["Mattina","👤 Anche oggi saremo con la nostra guida <strong>Jennifer Fujino (MS)</strong> · 📞 <a href='tel:+819050933412'>+81 90-5093-3412</a>. Costo giornata: <strong>¥28.300 + ¥2.000 = ¥30.300</strong>."],
        ["Mattina","🚌 Bus pubblico n. 31 verso Kumano Nachi Grand Shrine (riconfermare numero linea, fermata di partenza e orario sul posto). <a href='https://www.google.com/maps/search/?api=1&query=Kumano+Nachi+Taisha+Wakayama+Japan' target='_blank' rel='noopener'>⛩️ Destinazione Nachi</a>"],
       ["Mattina","🌲 Daimonzaka: la scalinata nel bosco, uno degli accessi più scenografici all'area sacra di Nachi (se compatibile con guida e bus). <a href='https://www.google.com/maps/search/?api=1&query=Daimonzaka+Wakayama+Japan' target='_blank' rel='noopener'>🌲 Daimonzaka</a>"],
@@ -913,7 +922,7 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
     <div class="grid">
       <div>
         <ul class="timeline">
-          ${d.schedule.map(([t,desc])=>`<li class="${t === "🎂" ? "birthday-event" : ""}"><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
+          ${d.schedule.map(([t,desc])=>`<li class="${t === "🎂" ? "birthday-event" : t === "🏨" ? "hotel-event" : ""}"><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
         </ul>
       </div>
       <div>
