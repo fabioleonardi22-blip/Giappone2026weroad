@@ -349,9 +349,11 @@
   .timeline li.coordinator-note::before{background:#d99a24;border-color:#fff;}
 
   /* Evidenza autonoma e ben visibile per gli hotel del Kumano */
-  .kumano-hotel-box{display:flex;flex-direction:column;gap:5px;margin:18px 0 22px;padding:16px 20px;background:#e1f4e9;border:2px solid #238454;border-left:7px solid #238454;border-radius:12px;color:#174c39;box-shadow:0 4px 14px rgba(35,132,84,.15);}
-  .kumano-hotel-box .kumano-hotel-label{font-size:11px;letter-spacing:.08em;font-weight:800;color:#21694e;}
-  .kumano-hotel-box strong{font-family:Georgia,serif;font-size:18px;line-height:1.35;color:#174c39;}
+  .kumano-hotel-box{display:flex;flex-direction:column;gap:5px;margin:18px 0 22px;padding:16px 20px;background:#e8f2ff;border:2px solid #2868b2;border-left:7px solid #2868b2;border-radius:12px;color:#153e70;box-shadow:0 4px 14px rgba(40,104,178,.16);text-decoration:none;transition:background .15s ease,transform .15s ease;cursor:pointer;}
+  .kumano-hotel-box:hover{background:#d6e8ff;transform:translateY(-1px);}
+  .kumano-hotel-box:focus-visible{outline:3px solid #2868b2;outline-offset:3px;}
+  .kumano-hotel-box .kumano-hotel-label{font-size:11px;letter-spacing:.08em;font-weight:800;color:#20579a;}
+  .kumano-hotel-box strong{font-family:Georgia,serif;font-size:18px;line-height:1.35;color:#153e70;}
 </style>
 </head>
 <body>
@@ -931,7 +933,7 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
     </div>
     <p class="day-sub">${d.focus}</p>
 
-    ${d.id === 6 ? '<div class="kumano-hotel-box"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE</span><strong>Sansuikan Kawayu Midoriya</strong></div>' : d.id === 7 ? '<div class="kumano-hotel-box"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE</span><strong>MAGURO BLDG by WhyKumano</strong></div>' : d.id === 8 ? '<div class="kumano-hotel-box"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE</span><strong>Temple Hotel Daitai-ji</strong></div>' : ''}
+    ${d.id === 6 ? '<a class="kumano-hotel-box" href="https://www.google.com/maps/search/?api=1&query=Sansuikan+Kawayu+Midoriya+Wakayama+Japan" target="_blank" rel="noopener" aria-label="Apri Sansuikan Kawayu Midoriya su Google Maps"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>Sansuikan Kawayu Midoriya</strong></a>' : d.id === 7 ? '<a class="kumano-hotel-box" href="https://www.google.com/maps/search/?api=1&query=MAGURO+BLDG+by+WhyKumano+Japan" target="_blank" rel="noopener" aria-label="Apri MAGURO BLDG by WhyKumano su Google Maps"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>MAGURO BLDG by WhyKumano</strong></a>' : d.id === 8 ? '<a class="kumano-hotel-box" href="https://www.google.com/maps/search/?api=1&query=Temple+Hotel+Daitai-ji+Wakayama+Japan" target="_blank" rel="noopener" aria-label="Apri Temple Hotel Daitai-ji su Google Maps"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>Temple Hotel Daitai-ji</strong></a>' : ''}
 
     <div class="grid">
       <div>
