@@ -341,6 +341,12 @@
   .timeline li.hotel-event .time{color:#21694e;font-weight:800;}
   .timeline li.hotel-event .desc{color:#174c39;font-weight:600;}
   .timeline li.hotel-event::before{background:#2f8f6b;border-color:#fff;}
+
+  /* Nota operativa coordinatore */
+  .timeline li.coordinator-note{background:#fff4df;border:2px solid #d99a24;border-radius:12px;padding:14px 16px;margin:12px 0 18px;box-shadow:0 3px 10px rgba(180,120,20,.09);}
+  .timeline li.coordinator-note .time{color:#895b0b;font-weight:800;}
+  .timeline li.coordinator-note .desc{color:#68450b;font-weight:600;}
+  .timeline li.coordinator-note::before{background:#d99a24;border-color:#fff;}
 </style>
 </head>
 <body>
@@ -630,6 +636,7 @@ const DAYS = [
   {
     id:6, date:"12 novembre", dest:"Kawayu Onsen", focus:"Kyoto → Kii-Tanabe → Ogigahama Beach → Kawayu Onsen", map:"Kawayu Onsen, Wakayama, Japan",
     schedule:[
+      ["🧳","<strong>NOTA COORDINATORE — TRASPORTO BAGAGLI:</strong> contattare il servizio bagagli e chiedere il ritiro/consegna alla stazione di Kii-Tanabe, con invio diretto dei bagagli al tempio (Temple Hotel Daitai-ji). Confermare prima il servizio e la destinazione."],
       ["🏨","Hotel della notte: <strong>Sansuikan Kawayu Midoriya</strong>."],
       ["10:00","🚆 <strong>Partenza per Kii-Tanabe alle 10:00.</strong> Kyoto → Kii-Tanabe: tratta lunga, portare colazione/snack. <a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Kii-Tanabe+Station,+Wakayama,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Google Maps</a>"],
       ["Arrivo a Kii-Tanabe","📍 Arrivo a Kii-Tanabe: dirigersi al Tanabe Tourist Information Center per bagagli e info. <a href='https://www.google.com/maps/search/?api=1&query=Tanabe+Tourist+Information+Center+Kii-Tanabe' target='_blank' rel='noopener'>ℹ️ Tourist Center</a>"],
@@ -922,7 +929,7 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
     <div class="grid">
       <div>
         <ul class="timeline">
-          ${d.schedule.map(([t,desc])=>`<li class="${t === "🎂" ? "birthday-event" : t === "🏨" ? "hotel-event" : ""}"><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
+          ${d.schedule.map(([t,desc])=>`<li class="${t === "🎂" ? "birthday-event" : t === "🏨" ? "hotel-event" : t === "🧳" ? "coordinator-note" : ""}"><div class="time">${t}</div><div class="desc">${desc}</div></li>`).join('')}
         </ul>
       </div>
       <div>
