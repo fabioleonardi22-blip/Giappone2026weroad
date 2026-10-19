@@ -347,6 +347,11 @@
   .timeline li.coordinator-note .time{color:#895b0b;font-weight:800;}
   .timeline li.coordinator-note .desc{color:#68450b;font-weight:600;}
   .timeline li.coordinator-note::before{background:#d99a24;border-color:#fff;}
+
+  /* Evidenza autonoma e ben visibile per gli hotel del Kumano */
+  .kumano-hotel-box{display:flex;flex-direction:column;gap:5px;margin:18px 0 22px;padding:16px 20px;background:#e1f4e9;border:2px solid #238454;border-left:7px solid #238454;border-radius:12px;color:#174c39;box-shadow:0 4px 14px rgba(35,132,84,.15);}
+  .kumano-hotel-box .kumano-hotel-label{font-size:11px;letter-spacing:.08em;font-weight:800;color:#21694e;}
+  .kumano-hotel-box strong{font-family:Georgia,serif;font-size:18px;line-height:1.35;color:#174c39;}
 </style>
 </head>
 <body>
@@ -925,6 +930,8 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
       <h2>Day ${d.id} · ${d.date} · ${d.dest}</h2>
     </div>
     <p class="day-sub">${d.focus}</p>
+
+    ${d.id === 6 ? '<div class="kumano-hotel-box"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE</span><strong>Sansuikan Kawayu Midoriya</strong></div>' : d.id === 7 ? '<div class="kumano-hotel-box"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE</span><strong>MAGURO BLDG by WhyKumano</strong></div>' : d.id === 8 ? '<div class="kumano-hotel-box"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE</span><strong>Temple Hotel Daitai-ji</strong></div>' : ''}
 
     <div class="grid">
       <div>
