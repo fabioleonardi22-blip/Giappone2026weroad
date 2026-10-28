@@ -1159,26 +1159,20 @@ function selectTab(id){
         currentLabel.textContent = selectedLanguage === 'ja' ? '日本語' : 'Italiano';
         closeLanguageMenu();
         if (selectedLanguage === 'it') {
-          // Google Translate can leave a persistent googtrans cookie, even after its toolbar is hidden.
-          // Clear it explicitly and reload the original Italian HTML.
+          // Return to the canonical Italian page and clear any Google Translate preference.
           document.cookie = 'googtrans=; Max-Age=0; path=/; SameSite=Lax';
           document.cookie = 'googtrans=; Max-Age=0; path=/; domain=' + window.location.hostname + '; SameSite=Lax';
           const hostParts = window.location.hostname.split('.');
           if (hostParts.length > 2) {
             document.cookie = 'googtrans=; Max-Age=0; path=/; domain=.' + hostParts.slice(-2).join('.') + '; SameSite=Lax';
           }
-          window.location.reload();
+          window.location.href = 'https://giappone2026weroad.vercel.app/';
           return;
         }
-        // Set Google's language cookie and reload so the translation is applied
-        // from the start of the page, not only to elements already rendered.
-        document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; SameSite=Lax';
-        document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; domain=' + window.location.hostname + '; SameSite=Lax';
-        const hostPartsForJapanese = window.location.hostname.split('.');
-        if (hostPartsForJapanese.length > 2) {
-          document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; domain=.' + hostPartsForJapanese.slice(-2).join('.') + '; SameSite=Lax';
-        }
-        window.location.reload();
+        // The embedded Google widget is unreliable when its toolbar is hidden.
+        // Use Google's hosted page translator for a reliable Japanese translation.
+        const originalUrl = 'https://giappone2026weroad.vercel.app/' + window.location.search + window.location.hash;
+        window.location.href = 'https://translate.google.com/translate?sl=it&tl=ja&u=' + encodeURIComponent(originalUrl);
       });
     });
   }
