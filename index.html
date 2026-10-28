@@ -371,6 +371,14 @@
   .timeline li.coordinator-note .desc{color:#68450b;font-weight:600;}
   .timeline li.coordinator-note::before{background:#d99a24;border-color:#fff;}
 
+  /* Schede hotel per ogni tappa del viaggio */
+  .hotel-stay-card{display:flex;flex-direction:column;gap:5px;margin:18px 0 22px;padding:16px 20px;background:#e8f2ff;border:2px solid #2868b2;border-left:7px solid #2868b2;border-radius:12px;color:#153e70;box-shadow:0 4px 14px rgba(40,104,178,.16);text-decoration:none;transition:background .15s ease,transform .15s ease;cursor:pointer;}
+  .hotel-stay-card:hover{background:#d6e8ff;transform:translateY(-1px);}
+  .hotel-stay-card:focus-visible{outline:3px solid #2868b2;outline-offset:3px;}
+  .hotel-stay-card .hotel-stay-label{font-size:11px;letter-spacing:.08em;font-weight:800;color:#20579a;}
+  .hotel-stay-card strong{font-family:Georgia,serif;font-size:18px;line-height:1.35;color:#153e70;}
+  .hotel-stay-card .hotel-stay-date{font-size:13px;color:#20579a;font-weight:600;}
+
   /* Evidenza autonoma e ben visibile per gli hotel del Kumano */
   .kumano-hotel-box{display:flex;flex-direction:column;gap:5px;margin:18px 0 22px;padding:16px 20px;background:#e8f2ff;border:2px solid #2868b2;border-left:7px solid #2868b2;border-radius:12px;color:#153e70;box-shadow:0 4px 14px rgba(40,104,178,.16);text-decoration:none;transition:background .15s ease,transform .15s ease;cursor:pointer;}
   .kumano-hotel-box:hover{background:#d6e8ff;transform:translateY(-1px);}
@@ -542,6 +550,17 @@
 <footer>Giappone Zen · Travel Diary Operativo — documento personale per il viaggio, 07–17 novembre 2026.</footer>
 
 <script>
+const HOTEL_STAYS = [
+  { days:[1,2,3], name:"KIN HOTEL", dates:"7–10 novembre · Tokyo", url:"https://maps.app.goo.gl/bpVL1W3bTUDrEWZ89" },
+  { days:[4], name:"Condominium Sakura — Hakonechou Yumoto Condominium Sakura HS1", dates:"10 novembre · Hakone", url:"https://www.google.com/maps/search/?api=1&query=Hakonechou+Yumoto+Condominium+Sakura+HS1" },
+  { days:[5], name:"Smart Place Inn Kyoto Shijo Horikawa", dates:"11 novembre · Kyoto", url:"https://maps.app.goo.gl/wiXWKaLYWWxDfK1G7" },
+  { days:[6], name:"山水館 川湯みどりや — Sansuikan Kawayu Midoriya", dates:"12 novembre · Kawayu Onsen", url:"https://maps.app.goo.gl/AbUKBdpgvib4XXXj9" },
+  { days:[7], name:"MAGURO BLDG. by WhyKumano", dates:"13 novembre · Katsuura", url:"https://maps.app.goo.gl/9mW8L57GR4NuZHT26" },
+  { days:[8], name:"Temple Hotel Daitai-ji", dates:"14 novembre · Tempio", url:"https://maps.app.goo.gl/UBfg5S72dRRefzxB9" },
+  { days:[9], name:"Sanco Inn Iseshi Ekimae “Honkan” ~Shiki no Yu~", dates:"15 novembre · Ise", url:"https://maps.app.goo.gl/DWtzKTXvexrDCwCy8" },
+  { days:[10], name:"Noku Osaka", dates:"16 novembre · Osaka", url:"https://maps.app.goo.gl/TigDh2vtBXoXvJ8g9" }
+];
+
 const DAYS = [
   {
     id:1, date:"7 novembre", dest:"Tokyo", focus:"Arrivo a Tokyo → Asakusa → Sensō-ji → Sumida → cena → Don Quijote", map:"Senso-ji Temple, Asakusa, Tokyo, Japan",
@@ -697,7 +716,7 @@ const DAYS = [
     ]
   },
   {
-    id:7, date:"13 novembre", dest:"Kawayu Onsen", focus:"Trekking con guida: Hosshinmon-ōji → Kumano Hongu Taisha (andata e ritorno)", map:"Kumano Hongu Taisha, Wakayama, Japan",
+    id:7, date:"13 novembre", dest:"Katsuura", focus:"Trekking con guida: Hosshinmon-ōji → Kumano Hongu Taisha; notte a Katsuura", map:"Kumano Hongu Taisha, Wakayama, Japan",
     schedule:[
       ["🏨","Hotel della notte: <strong>MAGURO BLDG by WhyKumano</strong>."],
       ["Mattina","♨️ Partenza da Kawayu Onsen: colazione, zaino giornaliero, bagagli principali gestiti separatamente. <a href='https://www.google.com/maps/search/?api=1&query=Kawayu+Onsen+Wakayama+Japan' target='_blank' rel='noopener'>📍 Kawayu Onsen</a>"],
@@ -960,7 +979,7 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
     </div>
     <p class="day-sub">${d.focus}</p>
 
-    ${d.id === 6 ? '<a class="kumano-hotel-box" href="https://www.google.com/maps/search/?api=1&query=Sansuikan+Kawayu+Midoriya+Wakayama+Japan" target="_blank" rel="noopener" aria-label="Apri Sansuikan Kawayu Midoriya su Google Maps"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>Sansuikan Kawayu Midoriya</strong></a>' : d.id === 7 ? '<a class="kumano-hotel-box" href="https://www.google.com/maps/search/?api=1&query=MAGURO+BLDG+by+WhyKumano+Japan" target="_blank" rel="noopener" aria-label="Apri MAGURO BLDG by WhyKumano su Google Maps"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>MAGURO BLDG by WhyKumano</strong></a>' : d.id === 8 ? '<a class="kumano-hotel-box" href="https://www.google.com/maps/search/?api=1&query=Temple+Hotel+Daitai-ji+Wakayama+Japan" target="_blank" rel="noopener" aria-label="Apri Temple Hotel Daitai-ji su Google Maps"><span class="kumano-hotel-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>Temple Hotel Daitai-ji</strong></a>' : ''}
+    ${(() => { const hotel = HOTEL_STAYS.find(h => h.days.includes(d.id)); return hotel ? `<a class="hotel-stay-card" href="${hotel.url}" target="_blank" rel="noopener" aria-label="Apri ${hotel.name} su Google Maps"><span class="hotel-stay-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>${hotel.name}</strong><span class="hotel-stay-date">${hotel.dates}</span></a>` : ""; })()}
 
     <div class="grid">
       <div>
