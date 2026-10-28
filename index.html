@@ -159,8 +159,16 @@
   }
   #google_translate_element .goog-te-gadget{font-size:1px!important;}
   #google_translate_element img,.goog-te-gadget-icon{display:none!important;}
-  body{top:0!important;}
-  .goog-te-banner-frame.skiptranslate{display:none!important;}
+  /* Hide Google's injected translation toolbar; keep the actual page translation enabled. */
+  html,body{top:0!important;margin-top:0!important;}
+  iframe.goog-te-banner-frame,
+  .goog-te-banner-frame,
+  .goog-te-banner-frame.skiptranslate,
+  body > .skiptranslate,
+  body > div.skiptranslate{display:none!important;visibility:hidden!important;height:0!important;max-height:0!important;overflow:hidden!important;}
+  .goog-te-menu-frame{z-index:99999!important;}
+  /* Google sometimes injects the banner after initial page load. */
+  
   @media(max-width:640px){
     .brandbar{align-items:flex-start;}
     .language-switcher{width:100%;justify-content:space-between;gap:9px;padding:8px 10px 8px 13px;min-height:54px;border-radius:18px;}
@@ -1065,6 +1073,19 @@ function selectTab(id){
 }
 </script>
 <script>
+  // Keep the translated page flush to the top if Google injects its toolbar.
+  function hideGoogleTranslateBanner() {
+    document.documentElement.style.setProperty('top', '0px', 'important');
+    if (document.body) document.body.style.setProperty('top', '0px', 'important');
+    document.querySelectorAll('iframe.goog-te-banner-frame, .goog-te-banner-frame, body > .skiptranslate, body > div.skiptranslate').forEach(function (node) {
+      node.style.setProperty('display', 'none', 'important');
+      node.style.setProperty('visibility', 'hidden', 'important');
+      node.style.setProperty('height', '0', 'important');
+    });
+  }
+  window.addEventListener('load', hideGoogleTranslateBanner);
+  const translateBannerObserver = new MutationObserver(hideGoogleTranslateBanner);
+  translateBannerObserver.observe(document.documentElement, { childList: true, subtree: true });
   // Google Website Translator controlled by the custom Italian/Japanese selector.
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
