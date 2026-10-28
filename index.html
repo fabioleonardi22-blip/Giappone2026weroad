@@ -1130,6 +1130,13 @@ function selectTab(id){
     const currentFlag = document.getElementById('language-current-flag');
     const currentLabel = document.getElementById('language-current-label');
     const languageOptions = document.querySelectorAll('.language-menu-option');
+    // Restore the visible choice from Google's translation cookie after reload.
+    const isJapaneseActive = document.cookie.split(';').some((cookie) => cookie.trim() === 'googtrans=/it/ja');
+    if (isJapaneseActive) {
+      currentFlag.className = 'language-flag japan';
+      currentLabel.textContent = '日本語';
+      languageOptions.forEach((item) => item.setAttribute('aria-checked', String(item.dataset.language === 'ja')));
+    }
     const closeLanguageMenu = () => {
       languageMenu.classList.remove('open');
       languageButton.setAttribute('aria-expanded', 'false');
@@ -1163,18 +1170,15 @@ function selectTab(id){
           window.location.reload();
           return;
         }
-        // Persist Japanese choice so Google applies it consistently on reload.
+        // Set Google's language cookie and reload so the translation is applied
+        // from the start of the page, not only to elements already rendered.
         document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; SameSite=Lax';
-        const applyLanguage = (attemptsLeft) => {
-          const googleSelect = document.querySelector('#google_translate_element select.goog-te-combo');
-          if (googleSelect) {
-            googleSelect.value = 'ja';
-            googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
-          } else if (attemptsLeft > 0) {
-            window.setTimeout(() => applyLanguage(attemptsLeft - 1), 250);
-          }
-        };
-        applyLanguage(12);
+        document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; domain=' + window.location.hostname + '; SameSite=Lax';
+        const hostPartsForJapanese = window.location.hostname.split('.');
+        if (hostPartsForJapanese.length > 2) {
+          document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; domain=.' + hostPartsForJapanese.slice(-2).join('.') + '; SameSite=Lax';
+        }
+        window.location.reload();
       });
     });
   }
