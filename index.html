@@ -1103,80 +1103,59 @@ function selectTab(id){
 }
 </script>
 <script>
-  // Keep the translated page flush to the top if Google injects its toolbar.
-  function hideGoogleTranslateBanner() {
-    document.documentElement.style.setProperty('top', '0px', 'important');
-    if (document.body) document.body.style.setProperty('top', '0px', 'important');
-    document.querySelectorAll('iframe.goog-te-banner-frame, .goog-te-banner-frame, body > .skiptranslate, body > div.skiptranslate').forEach(function (node) {
-      node.style.setProperty('display', 'none', 'important');
-      node.style.setProperty('visibility', 'hidden', 'important');
-      node.style.setProperty('height', '0', 'important');
-    });
-  }
-  window.addEventListener('load', hideGoogleTranslateBanner);
-  const translateBannerObserver = new MutationObserver(hideGoogleTranslateBanner);
-  translateBannerObserver.observe(document.documentElement, { childList: true, subtree: true });
-  // Google Website Translator controlled by the custom Italian/Japanese selector.
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'it',
-      includedLanguages: 'ja',
-      autoDisplay: false,
-      layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL
-    }, 'google_translate_element');
+  // Custom language menu works independently of Google's optional scripts.
+  (function () {
     const languageWrap = document.getElementById('language-choice-wrap');
     const languageButton = document.getElementById('language-choice-button');
     const languageMenu = document.getElementById('language-choice-menu');
     const currentFlag = document.getElementById('language-current-flag');
     const currentLabel = document.getElementById('language-current-label');
     const languageOptions = document.querySelectorAll('.language-menu-option');
-    // Restore the visible choice from Google's translation cookie after reload.
-    const isJapaneseActive = document.cookie.split(';').some((cookie) => cookie.trim() === 'googtrans=/it/ja');
-    if (isJapaneseActive) {
-      currentFlag.className = 'language-flag japan';
-      currentLabel.textContent = '日本語';
-      languageOptions.forEach((item) => item.setAttribute('aria-checked', String(item.dataset.language === 'ja')));
-    }
-    const closeLanguageMenu = () => {
+    if (!languageWrap || !languageButton || !languageMenu || !currentFlag || !currentLabel) return;
+
+    const closeLanguageMenu = function () {
       languageMenu.classList.remove('open');
       languageButton.setAttribute('aria-expanded', 'false');
     };
-    languageButton.addEventListener('click', () => {
+    languageButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
       const isOpen = languageMenu.classList.toggle('open');
       languageButton.setAttribute('aria-expanded', String(isOpen));
     });
-    document.addEventListener('click', (event) => {
+    languageMenu.addEventListener('click', function (event) { event.stopPropagation(); });
+    document.addEventListener('click', function (event) {
       if (!languageWrap.contains(event.target)) closeLanguageMenu();
     });
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') closeLanguageMenu();
     });
-    languageOptions.forEach((option) => {
-      option.addEventListener('click', function () {
-        const selectedLanguage = this.dataset.language;
-        languageOptions.forEach((item) => item.setAttribute('aria-checked', String(item === this)));
+
+    languageOptions.forEach(function (option) {
+      option.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const selectedLanguage = option.dataset.language;
+        languageOptions.forEach(function (item) {
+          item.setAttribute('aria-checked', String(item === option));
+        });
         currentFlag.className = 'language-flag ' + (selectedLanguage === 'ja' ? 'japan' : 'italy');
         currentLabel.textContent = selectedLanguage === 'ja' ? '日本語' : 'Italiano';
         closeLanguageMenu();
+
         if (selectedLanguage === 'it') {
-          // Return to the canonical Italian page and clear any Google Translate preference.
-          document.cookie = 'googtrans=; Max-Age=0; path=/; SameSite=Lax';
-          document.cookie = 'googtrans=; Max-Age=0; path=/; domain=' + window.location.hostname + '; SameSite=Lax';
-          const hostParts = window.location.hostname.split('.');
-          if (hostParts.length > 2) {
-            document.cookie = 'googtrans=; Max-Age=0; path=/; domain=.' + hostParts.slice(-2).join('.') + '; SameSite=Lax';
-          }
+          ['','.' + window.location.hostname].forEach(function (domain) {
+            document.cookie = 'googtrans=; Max-Age=0; path=/; SameSite=Lax' + (domain ? '; domain=' + domain : '');
+          });
           window.location.href = 'https://giappone2026weroad.vercel.app/';
           return;
         }
-        // The embedded Google widget is unreliable when its toolbar is hidden.
-        // Use Google's hosted page translator for a reliable Japanese translation.
+
         const originalUrl = 'https://giappone2026weroad.vercel.app/' + window.location.search + window.location.hash;
         window.location.href = 'https://translate.google.com/translate?sl=it&tl=ja&u=' + encodeURIComponent(originalUrl);
       });
     });
-  }
+  })();
 </script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
 </body>
 </html>
