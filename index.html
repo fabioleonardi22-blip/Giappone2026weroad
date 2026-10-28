@@ -123,27 +123,54 @@
   .brandmark small{
     font-size:11px; color: rgba(250,247,242,0.55); font-weight:400; letter-spacing:0.03em;
   }
-  /* Language selector: Italian / Japanese */
+  /* Language selector: polished travel-inspired pill */
   .language-switcher{
-    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
-    padding:7px 10px; border:1px solid rgba(250,247,242,0.28);
-    border-radius:12px; background:rgba(9,26,38,0.45);
-    color:var(--sand); font-size:12px;
+    display:flex; align-items:center; gap:18px; flex-wrap:nowrap;
+    min-height:58px; padding:9px 12px 9px 18px;
+    border:1px solid rgba(155,205,235,.58);
+    border-radius:999px;
+    background:linear-gradient(135deg,rgba(8,39,63,.94),rgba(10,51,78,.88));
+    box-shadow:0 8px 24px rgba(0,18,35,.18),inset 0 1px 0 rgba(255,255,255,.08);
+    color:#f7fbff; font-size:14px; backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
   }
-  .language-switcher-label{white-space:nowrap;font-weight:600;}
-  #google_translate_element{min-width:120px;}
-  #google_translate_element .goog-te-gadget{font-family:inherit!important;color:var(--sand)!important;font-size:12px!important;}
+  .language-switcher-label{
+    display:flex;align-items:center;gap:10px;white-space:nowrap;
+    font-weight:650;letter-spacing:.01em;color:#f7fbff;
+    padding-right:17px;border-right:1px solid rgba(185,220,242,.4);
+  }
+  #google_translate_element{min-width:132px;flex:0 0 auto;}
+  #google_translate_element .goog-te-gadget{
+    font-family:inherit!important;color:#102b40!important;font-size:13px!important;
+  }
   #google_translate_element .goog-te-gadget-simple{
-    border:1px solid rgba(250,247,242,0.32)!important;border-radius:8px!important;
-    padding:5px 8px!important;background:#fff!important;color:var(--navy)!important;
+    display:inline-flex!important;align-items:center;min-height:40px;
+    border:1px solid rgba(255,255,255,.92)!important;border-radius:999px!important;
+    padding:7px 13px!important;background:linear-gradient(#fff,#f3f7fb)!important;
+    color:#102b40!important;box-shadow:0 2px 7px rgba(0,0,0,.08);
+    transition:transform .18s ease,box-shadow .18s ease;
   }
-  #google_translate_element .goog-te-gadget-simple span{color:var(--navy)!important;}
+  #google_translate_element .goog-te-gadget-simple:hover{
+    transform:translateY(-1px);box-shadow:0 5px 13px rgba(0,0,0,.14);
+  }
+  #google_translate_element .goog-te-gadget-simple span{color:#102b40!important;}
+  #google_translate_element .goog-te-gadget-simple .goog-te-menu-value{display:flex;align-items:center;gap:6px;}
   #google_translate_element img,.goog-te-gadget-icon{display:none!important;}
   body{top:0!important;}
   .goog-te-banner-frame.skiptranslate{display:none!important;}
   @media(max-width:640px){
     .brandbar{align-items:flex-start;}
-    .language-switcher{width:100%;justify-content:space-between;}
+    .language-switcher{
+      width:100%;justify-content:space-between;gap:10px;
+      padding:8px 10px 8px 13px;min-height:54px;border-radius:18px;
+    }
+    .language-switcher-label{font-size:12px;gap:6px;padding-right:10px;}
+    #google_translate_element{min-width:112px;}
+    #google_translate_element .goog-te-gadget-simple{padding:7px 10px!important;min-height:38px;}
+  }
+  @media(max-width:380px){
+    .language-switcher-label{font-size:11px;}
+    #google_translate_element{min-width:102px;}
   }
 
   .doctype{
@@ -396,7 +423,7 @@
       <small style="margin-left:4px;">stile di viaggio · gruppo</small>
     </div>
     <div class="language-switcher" aria-label="Traduci il diario">
-      <span class="language-switcher-label">🌐 Lingua / 言語</span>
+      <span class="language-switcher-label"><span aria-hidden="true">🌐</span> Lingua / Language</span>
       <div id="google_translate_element"></div>
     </div>
     <div class="doctype">Travel Diary Operativo</div>
