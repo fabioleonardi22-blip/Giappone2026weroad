@@ -1151,10 +1151,24 @@ function selectTab(id){
         currentFlag.className = 'language-flag ' + (selectedLanguage === 'ja' ? 'japan' : 'italy');
         currentLabel.textContent = selectedLanguage === 'ja' ? '日本語' : 'Italiano';
         closeLanguageMenu();
+        if (selectedLanguage === 'it') {
+          // Google Translate can leave a persistent googtrans cookie, even after its toolbar is hidden.
+          // Clear it explicitly and reload the original Italian HTML.
+          document.cookie = 'googtrans=; Max-Age=0; path=/; SameSite=Lax';
+          document.cookie = 'googtrans=; Max-Age=0; path=/; domain=' + window.location.hostname + '; SameSite=Lax';
+          const hostParts = window.location.hostname.split('.');
+          if (hostParts.length > 2) {
+            document.cookie = 'googtrans=; Max-Age=0; path=/; domain=.' + hostParts.slice(-2).join('.') + '; SameSite=Lax';
+          }
+          window.location.reload();
+          return;
+        }
+        // Persist Japanese choice so Google applies it consistently on reload.
+        document.cookie = 'googtrans=/it/ja; Max-Age=31536000; path=/; SameSite=Lax';
         const applyLanguage = (attemptsLeft) => {
           const googleSelect = document.querySelector('#google_translate_element select.goog-te-combo');
           if (googleSelect) {
-            googleSelect.value = selectedLanguage === 'ja' ? 'ja' : '';
+            googleSelect.value = 'ja';
             googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
           } else if (attemptsLeft > 0) {
             window.setTimeout(() => applyLanguage(attemptsLeft - 1), 250);
