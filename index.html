@@ -349,6 +349,13 @@
   .timeline li.coordinator-note::before{background:#d99a24;border-color:#fff;}
 
   /* Schede hotel per ogni tappa del viaggio */
+  .trekking-kit-box{margin:18px 0 22px;padding:18px 20px;background:linear-gradient(135deg,#fff7e8,#ffefd2);border:1px solid #e5b86c;border-left:7px solid #c47a17;border-radius:14px;color:#49351c;box-shadow:0 5px 16px rgba(125,83,25,.12);line-height:1.55;}
+  .trekking-kit-box h3{margin:0 0 8px;font-size:18px;color:#7b4810;display:flex;align-items:center;gap:8px;}
+  .trekking-kit-box .kit-intro{margin:0 0 12px;font-size:13px;}
+  .trekking-kit-box h4{margin:12px 0 5px;font-size:14px;color:#7b4810;}
+  .trekking-kit-box ul{margin:5px 0 0;padding-left:20px;}
+  .trekking-kit-box li{margin:4px 0;font-size:13px;}
+  .trekking-kit-box .kit-weather{display:inline-block;margin:0 0 8px;padding:5px 9px;border-radius:8px;background:#ffe3ad;font-size:12px;font-weight:700;color:#70420b;}
   .hotel-stay-card{display:flex;flex-direction:column;gap:5px;margin:18px 0 22px;padding:16px 20px;background:#e8f2ff;border:2px solid #2868b2;border-left:7px solid #2868b2;border-radius:12px;color:#153e70;box-shadow:0 4px 14px rgba(40,104,178,.16);text-decoration:none;transition:background .15s ease,transform .15s ease;cursor:pointer;}
   .hotel-stay-card:hover{background:#d6e8ff;transform:translateY(-1px);}
   .hotel-stay-card:focus-visible{outline:3px solid #2868b2;outline-offset:3px;}
@@ -691,6 +698,25 @@ const DAYS = [
   {
     id:7, date:"13 novembre", dest:"Katsuura", focus:"08:30–12:30 · Hosshinmon-oji → Kumano Hongu Taisha e Oyunohara; notte a Katsuura", map:"Kumano Hongu Taisha, Wakayama, Japan",
     schedule:[
+      ["🎒 MATERIALE PER L’ESCURSIONE",`<div class="trekking-kit-box">
+        <h3>🎒 Cosa portare per il Kumano Kodo</h3>
+        <div class="kit-weather">🌦️ Clima variabile: circa 11°C al mattino, oltre 20°C nelle ore più miti; possibili piogge</div>
+        <p class="kit-intro">Vestirsi a strati e prepararsi a sentieri umidi o scivolosi. Evitare il cotone, che asciuga lentamente.</p>
+        <h4>🧥 Abbigliamento a strati</h4>
+        <ul>
+          <li><strong>Strato base e intermedio:</strong> maglie a maniche lunghe in materiale sintetico ad asciugatura rapida e pantaloni da trekking leggeri.</li>
+          <li><strong>Strato termico:</strong> pile, maglione o piumino ultraleggero e compatto per mattina e sera.</li>
+          <li><strong>Pioggia:</strong> giacca impermeabile e traspirante, più sovrapantaloni impermeabili oppure poncho.</li>
+          <li><strong>Accessori:</strong> berretto leggero o cappello a tesa larga, guanti sottili e bandana multifunzione o scaldacollo.</li>
+        </ul>
+        <h4>🥾 Calzature</h4>
+        <ul><li>Scarponi o scarpe da escursionismo già ben rodati, con buona aderenza e supporto adeguato alle caviglie.</li></ul>
+        <h4>🎒 Zaino giornaliero (15–25 L)</h4>
+        <ul>
+          <li>Coprizaino impermeabile.</li>
+          <li><strong>Bastoncini da trekking consigliati:</strong> aiutano a proteggere le ginocchia nelle discese ripide su pietra e a mantenere l’equilibrio sui tratti scivolosi.</li>
+        </ul>
+      </div>`],
       ["🏨","Hotel della notte: <strong>MAGURO BLDG by WhyKumano</strong>. Il pernottamento è a Katsuura."],
       ["07:50","👤 <strong>Incontro con la guida nella hall del Kawayu Onsen Midoriya.</strong> Prepararsi con zaino giornaliero e acqua."],
       ["08:00","🚌 <strong>Partenza in bus navetta dall’hotel verso Hosshinmon-oji.</strong> È richiesta la prenotazione del posto la mattina stessa del tour: ricordarsi di effettuarla."],
