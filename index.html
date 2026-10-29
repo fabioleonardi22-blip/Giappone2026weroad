@@ -210,6 +210,10 @@
   .day-head h2{ font-size:28px; }
   .day-head .destchip{ position:relative; top:-2px; }
   .day-sub{ color: var(--text-soft); margin-top:4px; font-size:14.5px; }
+  .day-intro-box{margin:16px 0 20px;padding:16px 18px;border:1px solid rgba(47,143,107,.22);border-left:5px solid var(--jade);border-radius:12px;background:linear-gradient(135deg,rgba(47,143,107,.10),rgba(217,164,65,.10));box-shadow:0 5px 16px rgba(15,42,61,.05);}
+  .day-intro-box .intro-label{display:block;margin-bottom:5px;color:var(--jade);font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;}
+  .day-intro-box p{margin:0;font-size:15px;line-height:1.65;color:var(--text);}
+  @media(max-width:600px){.day-intro-box{padding:13px 14px;margin:13px 0 16px}.day-intro-box p{font-size:14px}}
 
   .grid{
     display:grid; grid-template-columns: 1.3fr 1fr; gap:28px; margin-top:28px;
@@ -543,7 +547,7 @@ const HOTEL_STAYS = [
 
 const DAYS = [
   {
-    id:1, date:"7 novembre", dest:"Tokyo", focus:"Arrivo a Tokyo → Asakusa → Sensō-ji → Sumida → cena → Don Quijote", map:"Senso-ji Temple, Asakusa, Tokyo, Japan",
+    id:1, date:"7 novembre", dest:"Tokyo", focus:"Arrivo a Tokyo → Asakusa → Sensō-ji → Sumida → cena → Don Quijote", intro:undefined, map:"Senso-ji Temple, Asakusa, Tokyo, Japan",
     schedule:[
       ["Pomeriggio","🛬 Arrivo a Tokyo, sistemazione in autonomia. Il punto di ritrovo parte da Asakusa Station."],
       ["17:00","👥 Welcome meeting ad Asakusa Station. Uscita consigliata verso Kaminarimon. <a href='https://www.google.com/maps/dir/?api=1&origin=Asakusa+Station,+Tokyo,+Japan&destination=Kaminarimon,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Stazione → Kaminarimon</a>"],
@@ -566,7 +570,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:2, date:"8 novembre", dest:"Tokyo", focus:"Ueno → Akihabara → pausa hotel → Shibuya → cena → Tokyo Night · 🎂 Compleanno di Sara Rhouddani", map:"Shibuya Crossing, Tokyo, Japan",
+    id:2, date:"8 novembre", dest:"Tokyo", focus:"Ueno → Akihabara → pausa hotel → Shibuya → cena → Tokyo Night · 🎂 Compleanno di Sara Rhouddani", intro:undefined, map:"Shibuya Crossing, Tokyo, Japan",
     schedule:[
       ["🎂","Compleanno di Sara Rhouddani! Auguri Sara 🇯🇵🎉 Un brindisi durante la giornata in gruppo."],
       ["08:00","🚉 Ueno Station: arrivo e colazione, punto operativo della giornata. <a href='https://www.google.com/maps/dir/?api=1&origin=Ueno+Station,+Tokyo,+Japan&destination=Ueno+Park,+Tokyo,+Japan&travelmode=walking' target='_blank' rel='noopener'>📍 Ueno Park</a>"],
@@ -597,7 +601,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:3, date:"9 novembre", dest:"Monte Takao", focus:"Monte Takao con guida privata, poi Shinjuku", map:"Mount Takao, Hachioji, Tokyo, Japan",
+    id:3, date:"9 novembre", dest:"Monte Takao", focus:"Monte Takao con guida privata, poi Shinjuku", intro:undefined, map:"Mount Takao, Hachioji, Tokyo, Japan",
     schedule:[
       ["07:30–08:00","🚉 Hotel → Shinjuku: Suica pronta, obiettivo arrivare alla zona Keio con margine. <a href='https://www.google.com/maps/search/?api=1&query=Keio+Shinjuku+Station+Tokyo' target='_blank' rel='noopener'>📍 Keio Shinjuku</a>"],
       ["08:10–09:05","🚆 Shinjuku → Takaosanguchi (Keio Line), soluzione diretta/rapida più comoda. <a href='https://www.google.com/maps/dir/?api=1&origin=Keio+Shinjuku+Station,+Tokyo,+Japan&destination=Takaosanguchi+Station,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Apri tragitto</a>"],
@@ -621,7 +625,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:4, date:"10 novembre", dest:"Hakone", focus:"Odawara → Gora → Sounzan → Ōwakudani → Lago Ashi → Hakone Shrine", map:"Owakudani, Hakone, Japan",
+    id:4, date:"10 novembre", dest:"Hakone", focus:"Odawara → Gora → Sounzan → Ōwakudani → Lago Ashi → Hakone Shrine", intro:undefined, map:"Owakudani, Hakone, Japan",
     schedule:[
       ["08:30–09:00","🚅 <strong>Partenza per Hakone tra le 08:30 e le 09:00.</strong> Tokyo/Shinagawa → Odawara con Tokaido Shinkansen (JR Pass: Hikari/Kodama; il Nozomi richiede un supplemento dedicato). <a href='https://www.google.com/maps/dir/?api=1&origin=Tokyo+Station,+Tokyo,+Japan&destination=Odawara+Station,+Kanagawa,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚅 Da Tokyo Station</a> <a href='https://www.google.com/maps/dir/?api=1&origin=Shinagawa+Station,+Tokyo,+Japan&destination=Odawara+Station,+Kanagawa,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚅 Da Shinagawa</a>"],
       ["Arrivo a Odawara","🧳 Odawara: bagagli (coin locker o consegna in hotel). 🎫 <strong>Acquistare l’Hakone Free Pass con la cassa comune.</strong> <a href='https://www.google.com/maps/search/?api=1&query=Odawara+Station+coin+lockers' target='_blank' rel='noopener'>🧳 Locker</a>"],
@@ -646,7 +650,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:5, date:"11 novembre", dest:"Kyoto", focus:"Nishiki Market, centro, Fushimi Inari e Gion by night", map:"Fushimi Inari Taisha, Kyoto, Japan",
+    id:5, date:"11 novembre", dest:"Kyoto", focus:"Nishiki Market, centro, Fushimi Inari e Gion by night", intro:undefined, map:"Fushimi Inari Taisha, Kyoto, Japan",
     schedule:[
       ["10:00","🧳 Arrivo a Kyoto Station (idealmente entro le 10:00–10:30): bagagli in hotel o nei coin locker; konbini se serve recuperare tempo. <a href='https://www.google.com/maps/search/?api=1&query=Kyoto+Station+coin+lockers' target='_blank' rel='noopener'>🧳 Coin locker</a>"],
       ["10:30","🚇 Kyoto Station → Nishiki Market. <a href='https://www.google.com/maps/dir/?api=1&origin=Kyoto+Station,+Kyoto,+Japan&destination=Nishiki+Market,+Kyoto,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚇 Apri tragitto</a>"],
@@ -667,7 +671,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:6, date:"12 novembre", dest:"Kawayu Onsen", focus:"Kyoto → Kii-Tanabe → Ogigahama Beach → Kawayu Onsen", map:"Kawayu Onsen, Wakayama, Japan",
+    id:6, date:"12 novembre", dest:"Kawayu Onsen", focus:"Kyoto → Kii-Tanabe → Ogigahama Beach → Kawayu Onsen", intro:undefined, map:"Kawayu Onsen, Wakayama, Japan",
     schedule:[
       ["🧳","<strong>NOTA COORDINATORE — TRASPORTO BAGAGLI:</strong> contattare il servizio bagagli e chiedere il ritiro/consegna alla stazione di Kii-Tanabe, con invio diretto dei bagagli al tempio (Temple Hotel Daitai-ji). Confermare prima il servizio e la destinazione."],
       ["🏨","Hotel della notte: <strong>Sansuikan Kawayu Midoriya</strong>."],
@@ -696,7 +700,7 @@ const DAYS = [
     ]
   },
   {
-    id:7, date:"13 novembre", dest:"Katsuura", focus:"08:30–12:30 · Hosshinmon-oji → Kumano Hongu Taisha e Oyunohara; notte a Katsuura", map:"Kumano Hongu Taisha, Wakayama, Japan",
+    id:7, date:"13 novembre", dest:"Katsuura", focus:"08:30–12:30 · Hosshinmon-oji → Kumano Hongu Taisha e Oyunohara; notte a Katsuura", intro:undefined, map:"Kumano Hongu Taisha, Wakayama, Japan",
     schedule:[
       ["🎒 MATERIALE PER L’ESCURSIONE",`<div class="trekking-kit-box">
         <h3>🎒 Cosa portare per il Kumano Kodo</h3>
@@ -734,7 +738,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:8, date:"14 novembre", dest:"Kii-Katsuura", focus:"09:23–12:30 · Daimonzaka, Kumano Nachi Taisha, Seiganto-ji e cascate di Nachi", map:"Kumano Nachi Taisha, Wakayama, Japan",
+    id:8, date:"14 novembre", dest:"Kii-Katsuura", focus:"09:23–12:30 · Daimonzaka, Kumano Nachi Taisha, Seiganto-ji e cascate di Nachi", intro:undefined, map:"Kumano Nachi Taisha, Wakayama, Japan",
     schedule:[
       ["🏨","Hotel della notte: <strong>Temple Hotel Daitai-ji</strong>. Il trasferimento al tempio dopo il tour va organizzato in anticipo."],
       ["08:40","👤 <strong>Incontro con la guida nella hall del MAGURO BLDG (gestito da WhyKumano).</strong> Da lì spostamento a piedi verso la stazione di Kii-Katsuura."],
@@ -760,7 +764,7 @@ const DAYS = [
     ]
   },
   {
-    id:9, date:"15 novembre", dest:"Ise", focus:"Daitai-ji → Taiji → Ise Jingu → Futami e Meoto Iwa", map:"Ise Jingu Naiku, Ise, Mie, Japan",
+    id:9, date:"15 novembre", dest:"Ise", focus:"Daitai-ji → Taiji → Ise Jingu → Futami e Meoto Iwa", intro:undefined, map:"Ise Jingu Naiku, Ise, Mie, Japan",
     schedule:[
       ["07:00–08:00 (da concordare)","🛕 Risveglio al Temple Hotel Daitai-ji e attività concordate con la struttura (gli orari dipendono dall'esperienza prenotata). <a href='https://oterastay.com/en/daitaiji/experience/' target='_blank' rel='noopener'>🧘 Attività Daitai-ji</a>"],
       ["08:00–08:30","🚕 Daitai-ji → Taiji Station in taxi (prenotato in anticipo), con margine prima del treno. <a href='https://www.google.com/maps/dir/?api=1&origin=Temple+Hotel+Daitai-ji,+Wakayama,+Japan&destination=Taiji+Station,+Wakayama,+Japan&travelmode=driving' target='_blank' rel='noopener'>🚕 Apri tragitto</a>"],
@@ -782,7 +786,7 @@ const DAYS = [
     contacts:[]
   },
   {
-    id:10, date:"16 novembre", dest:"Nara / Osaka", focus:"Giornata a scelta: Ise → Nara + Osaka oppure Ise → Osaka diretta · 🎂 Compleanno di Danilo Barretta", map:"Dotonbori, Osaka, Japan",
+    id:10, date:"16 novembre", dest:"Nara / Osaka", focus:"Giornata a scelta: Ise → Nara + Osaka oppure Ise → Osaka diretta · 🎂 Compleanno di Danilo Barretta", intro:undefined, map:"Dotonbori, Osaka, Japan",
     schedule:[
       ["🎂","Compleanno di Danilo Barretta! Auguri Danilo 🇯🇵🎉 Da festeggiare insieme durante la giornata."],
       ["08:00–08:30","🧳 Check-out da Ise: colazione, check-out e partenza. Dividere il gruppo tra Opzione A (Nara + Osaka) e Opzione B (Osaka diretta), definendo già luogo e orario del ritrovo serale. <a href='https://www.google.com/maps/search/?api=1&query=Iseshi+Station+Mie+Japan' target='_blank' rel='noopener'>🚉 Iseshi Station</a>"],
@@ -807,7 +811,7 @@ const DAYS = [
     ]
   },
   {
-    id:11, date:"17 novembre", dest:"Osaka", focus:"Check-out e partenze individuali", map:"Osaka Station, Osaka, Japan",
+    id:11, date:"17 novembre", dest:"Osaka", focus:"Check-out e partenze individuali", intro:undefined, map:"Osaka Station, Osaka, Japan",
     schedule:[
       ["08:00–10:00 circa","🧳 Check-out (orario esatto da confermare in hotel)."],
       ["Dopo il check-out","✈️ Partenze individuali secondo gli orari dei voli."]
@@ -973,6 +977,7 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
       <h2>Day ${d.id} · ${d.date} · ${d.dest}</h2>
     </div>
     <p class="day-sub">${d.focus}</p>
+    <div class="day-intro-box"><span class="intro-label">La giornata in breve</span><p>${d.intro}</p></div>
 
     ${(() => { const hotel = HOTEL_STAYS.find(h => h.days.includes(d.id)); return hotel ? `<a class="hotel-stay-card" href="${hotel.url}" target="_blank" rel="noopener" aria-label="Apri ${hotel.name} su Google Maps"><span class="hotel-stay-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>${hotel.name}</strong><span class="hotel-stay-date">${hotel.dates}</span></a>` : ""; })()}
 
