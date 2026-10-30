@@ -307,6 +307,31 @@
     }
   }
 
+
+  /* VALIGIA — checklist interattiva */
+  .packing-section{margin-top:20px;padding:22px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 18px rgba(15,42,61,.05);}
+  .packing-heading-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+  .packing-eyebrow{display:inline-block;margin-bottom:7px;color:var(--jade);font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;}
+  .packing-heading-row h3{font-size:25px;color:var(--navy);}
+  .packing-heading-row .day-sub{max-width:680px;margin:8px 0 0;}
+  .packing-count{display:flex;align-items:baseline;gap:5px;padding:9px 13px;border-radius:10px;background:rgba(47,143,107,.10);color:var(--jade);font-size:12px;font-weight:700;white-space:nowrap;}
+  .packing-count strong{font-size:23px;}
+  .packing-progress{height:9px;margin:18px 0 22px;background:#e9eee9;border-radius:99px;overflow:hidden;}
+  .packing-progress span{display:block;width:0;height:100%;background:var(--jade);border-radius:99px;transition:width .2s ease;}
+  .packing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  .packing-card{min-width:0;padding:16px 17px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+  .packing-card h4{margin:0 0 9px;font-family:inherit;font-size:14px;font-weight:800;color:var(--navy);letter-spacing:0;}
+  .packing-card-highlight{background:#fffaf1;border-color:#e5c58d;}
+  .packing-tip{margin:0 0 8px;color:#76521c;font-size:12.5px;line-height:1.5;}
+  .packing-list li{padding:7px 0;font-size:13.5px;cursor:default;}
+  .packing-list label{display:flex;align-items:flex-start;gap:9px;width:100%;cursor:pointer;}
+  .packing-list input{flex:0 0 auto;margin:3px 0 0;accent-color:var(--jade);width:16px;height:16px;}
+  .packing-list li.done .lbl,.packing-list label:has(input:checked){color:var(--text-soft);text-decoration:line-through;}
+  .packing-footnote{margin:18px 0 8px;padding:12px 14px;border-radius:10px;background:rgba(217,164,65,.12);color:#6b4d10;font-size:13px;line-height:1.55;}
+  .packing-reset{margin-top:8px;padding:9px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text-soft);font:600 12px inherit;cursor:pointer;}
+  .packing-reset:hover{border-color:var(--coral);color:var(--coral-deep);}
+  @media(max-width:640px){.packing-section{padding:15px}.packing-grid{grid-template-columns:1fr}.packing-heading-row h3{font-size:22px}.packing-count{padding:7px 10px}.packing-card{padding:14px}.packing-list li{font-size:14px}}
+
   /* CHECKLIST */
   .checklist{ list-style:none; padding:0; margin:0; }
   .checklist li{
@@ -518,23 +543,122 @@
       <p class="day-sub" style="margin-top:10px;font-size:.85rem;">Le fasce del sito sono valori climatici indicativi; le stime aggiornate sono previsioni per le date del viaggio e possono cambiare. Ricontrollare il meteo a ridosso della partenza, soprattutto per le escursioni.</p>
     </div>
 
-    <div class="side-card" style="margin-top:20px;">
-      <h4>Cosa portare — lista di massima</h4>
-      <ul class="checklist">
-        <li><input type="checkbox"><span>Maglie leggere e camicie a maniche lunghe</span></li>
-        <li><input type="checkbox"><span>Maglione o pile per le sere fresche</span></li>
-        <li><input type="checkbox"><span>Giacca media / impermeabile leggero</span></li>
-        <li><input type="checkbox"><span>Scarpe da trekking comode e già rodate (Kumano Kodo)</span></li>
-        <li><input type="checkbox"><span>Scarpe comode per la città</span></li>
-        <li><input type="checkbox"><span>Costume e accappatoio leggero per gli onsen</span></li>
-        <li><input type="checkbox"><span>Sciarpa leggera / cappello per le sere fresche</span></li>
-        <li><input type="checkbox"><span>Adattatore di corrente (tipo A/B, 100V)</span></li>
-        <li><input type="checkbox"><span>Power bank</span></li>
-        <li><input type="checkbox"><span>Contanti in Yen (molte zone rurali non accettano carte)</span></li>
-        <li><input type="checkbox"><span>Copia del passaporto e assicurazione salvata offline</span></li>
-        <li><input type="checkbox"><span>Documenti di viaggio: voucher e conferme prenotazioni</span></li>
-      </ul>
-    </div>
+    
+    <section class="packing-section" aria-labelledby="packing-heading">
+      <div class="packing-heading-row">
+        <div>
+          <span class="packing-eyebrow">🎒 Preparazione personale</span>
+          <h3 id="packing-heading">La valigia per il Giappone</h3>
+          <p class="day-sub">Checklist per il viaggio 7–17 novembre 2026, con abbigliamento per le città e attrezzatura per il Kumano Kodo. Spunta ogni elemento mentre prepari il bagaglio.</p>
+        </div>
+        <div class="packing-count" aria-live="polite"><strong id="packingDone">0</strong><span> / <span id="packingTotal">0</span> preparati</span></div>
+      </div>
+      <div class="packing-progress" role="progressbar" aria-label="Avanzamento preparazione valigia" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="packingProgress"><span id="packingProgressBar"></span></div>
+
+      <div class="packing-grid">
+        <article class="packing-card">
+          <h4>🛂 Documenti e denaro</h4>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> Passaporto valido per tutta la durata del soggiorno</label></li>
+            <li><label><input type="checkbox" data-packing-check> Biglietti aerei e carte d'imbarco</label></li>
+            <li><label><input type="checkbox" data-packing-check> Assicurazione viaggio e numero di emergenza</label></li>
+            <li><label><input type="checkbox" data-packing-check> Prenotazioni di hotel e conferme del viaggio</label></li>
+            <li><label><input type="checkbox" data-packing-check> Carta Revolut e carta N26 di riserva</label></li>
+            <li><label><input type="checkbox" data-packing-check> Contanti in yen</label></li>
+            <li><label><input type="checkbox" data-packing-check> Copia digitale dei documenti disponibile offline</label></li>
+          </ul>
+        </article>
+
+        <article class="packing-card">
+          <h4>👕 Abbigliamento quotidiano</h4>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> 5–6 magliette</label></li>
+            <li><label><input type="checkbox" data-packing-check> 2–3 pantaloni lunghi comodi</label></li>
+            <li><label><input type="checkbox" data-packing-check> 1 jeans o pantalone per la sera</label></li>
+            <li><label><input type="checkbox" data-packing-check> 1 felpa e 1 maglione</label></li>
+            <li><label><input type="checkbox" data-packing-check> 1 giacca calda o piumino leggero</label></li>
+            <li><label><input type="checkbox" data-packing-check> 1 giacca antivento e impermeabile</label></li>
+            <li><label><input type="checkbox" data-packing-check> Intimo per 7–10 giorni</label></li>
+            <li><label><input type="checkbox" data-packing-check> 10 paia di calze e pigiama</label></li>
+            <li><label><input type="checkbox" data-packing-check> Berretto o cappellino e sciarpa leggera</label></li>
+            <li><label><input type="checkbox" data-packing-check> Un cambio adatto a una serata fuori</label></li>
+          </ul>
+        </article>
+
+        <article class="packing-card packing-card-highlight">
+          <h4>🥾 Kumano Kodo — trekking</h4>
+          <p class="packing-tip">La priorità: scarpe già collaudate e protezione dalla pioggia. Prepara nello zaino il necessario per le tappe a piedi.</p>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> Scarpe da trekking già rodate</label></li>
+            <li><label><input type="checkbox" data-packing-check> Calze tecniche da trekking</label></li>
+            <li><label><input type="checkbox" data-packing-check> Pantaloni tecnici</label></li>
+            <li><label><input type="checkbox" data-packing-check> Maglia termica e pile caldo</label></li>
+            <li><label><input type="checkbox" data-packing-check> Giacca impermeabile traspirante</label></li>
+            <li><label><input type="checkbox" data-packing-check> Zaino giornaliero da 20–25 litri</label></li>
+            <li><label><input type="checkbox" data-packing-check> Copri-zaino impermeabile</label></li>
+            <li><label><input type="checkbox" data-packing-check> Borraccia</label></li>
+            <li><label><input type="checkbox" data-packing-check> Cerotti per vesciche e piccolo kit pronto soccorso</label></li>
+            <li><label><input type="checkbox" data-packing-check> Asciugamano tecnico</label></li>
+            <li><label><input type="checkbox" data-packing-check> Sacchetto impermeabile per cambio e dispositivi</label></li>
+            <li><label><input type="checkbox" data-packing-check> Bastoncini da trekking, se li utilizzi</label></li>
+          </ul>
+        </article>
+
+        <article class="packing-card">
+          <h4>👟 Scarpe e accessori</h4>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> Scarpe da ginnastica comode per la città</label></li>
+            <li><label><input type="checkbox" data-packing-check> Ciabatte per hotel</label></li>
+            <li><label><input type="checkbox" data-packing-check> Ombrello pieghevole</label></li>
+            <li><label><input type="checkbox" data-packing-check> Occhiali da sole</label></li>
+            <li><label><input type="checkbox" data-packing-check> Zainetto o borsa piccola da città</label></li>
+            <li><label><input type="checkbox" data-packing-check> Borsa pieghevole per gli acquisti</label></li>
+            <li><label><input type="checkbox" data-packing-check> Sacchetto per biancheria e scarpe</label></li>
+          </ul>
+        </article>
+
+        <article class="packing-card">
+          <h4>🧴 Igiene e salute</h4>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> Spazzolino e dentifricio</label></li>
+            <li><label><input type="checkbox" data-packing-check> Deodorante e prodotti per l'igiene</label></li>
+            <li><label><input type="checkbox" data-packing-check> Shampoo e docciaschiuma in formato da viaggio</label></li>
+            <li><label><input type="checkbox" data-packing-check> Crema viso e corpo e burrocacao</label></li>
+            <li><label><input type="checkbox" data-packing-check> Rasoio e accessori personali</label></li>
+            <li><label><input type="checkbox" data-packing-check> Farmaci personali e medicinali abituali</label></li>
+            <li><label><input type="checkbox" data-packing-check> Cerotti, fazzoletti e gel igienizzante</label></li>
+          </ul>
+        </article>
+
+        <article class="packing-card">
+          <h4>📱 Tecnologia e connessione</h4>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> Smartphone</label></li>
+            <li><label><input type="checkbox" data-packing-check> eSIM Giappone installata e istruzioni salvate</label></li>
+            <li><label><input type="checkbox" data-packing-check> Power bank</label></li>
+            <li><label><input type="checkbox" data-packing-check> Caricabatterie e cavi</label></li>
+            <li><label><input type="checkbox" data-packing-check> Adattatore presa giapponese tipo A</label></li>
+            <li><label><input type="checkbox" data-packing-check> Auricolari</label></li>
+            <li><label><input type="checkbox" data-packing-check> Fotocamera, batterie e schede SD</label></li>
+            <li><label><input type="checkbox" data-packing-check> Google Maps e traduttore configurati anche offline</label></li>
+          </ul>
+        </article>
+
+        <article class="packing-card">
+          <h4>🎌 Extra utili in Giappone</h4>
+          <ul class="checklist packing-list">
+            <li><label><input type="checkbox" data-packing-check> Calzini senza buchi: spesso ci si toglie le scarpe</label></li>
+            <li><label><input type="checkbox" data-packing-check> Mascherine</label></li>
+            <li><label><input type="checkbox" data-packing-check> Piccolo lucchetto per il bagaglio</label></li>
+            <li><label><input type="checkbox" data-packing-check> Sacchetti per piccoli rifiuti</label></li>
+            <li><label><input type="checkbox" data-packing-check> Costume solo se richiesto da una struttura con piscina o spa</label></li>
+            <li><label><input type="checkbox" data-packing-check> Piccolo regalo dall'Italia, se desiderato</label></li>
+          </ul>
+        </article>
+      </div>
+      <p class="packing-footnote">Nota Kumano Kodo: prepara nello zaino un cambio, documenti, farmaci, acqua e dispositivi essenziali. La valigia principale può viaggiare separatamente con il servizio di trasporto bagagli.</p>
+      <button type="button" class="packing-reset" id="packingReset">Azzera le spunte della valigia</button>
+    </section>
   </div>
 
   <div id="dayPanels"></div>
@@ -1040,6 +1164,44 @@ function selectTab(id){
   if(btn){ btn.classList.add('active'); btn.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }
   window.scrollTo({top: document.querySelector('.tabs-wrap').offsetTop, behavior:'smooth'});
 }
+  
+// Checklist valigia: spunte salvate su questo dispositivo e avanzamento aggiornato.
+(function initPackingChecklist(){
+  const boxes = Array.from(document.querySelectorAll('[data-packing-check]'));
+  const storageKey = 'giappone-zen-packing-2026-v1';
+  const doneEl = document.getElementById('packingDone');
+  const totalEl = document.getElementById('packingTotal');
+  const bar = document.getElementById('packingProgressBar');
+  const progress = document.getElementById('packingProgress');
+  const reset = document.getElementById('packingReset');
+  if (!boxes.length || !doneEl || !totalEl || !bar || !progress) return;
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch(e) {}
+  boxes.forEach((box,index) => {
+    box.checked = Boolean(saved[index]);
+    box.addEventListener('change', () => {
+      const state = {};
+      boxes.forEach((item,i) => { state[i] = item.checked; });
+      try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch(e) {}
+      updatePackingProgress();
+    });
+  });
+  function updatePackingProgress(){
+    const done = boxes.filter(box => box.checked).length;
+    const percent = Math.round(done / boxes.length * 100);
+    doneEl.textContent = done;
+    totalEl.textContent = boxes.length;
+    bar.style.width = percent + '%';
+    progress.setAttribute('aria-valuenow', String(percent));
+  }
+  if (reset) reset.addEventListener('click', () => {
+    boxes.forEach(box => { box.checked = false; });
+    try { localStorage.removeItem(storageKey); } catch(e) {}
+    updatePackingProgress();
+  });
+  updatePackingProgress();
+})();
+
 </script>
 
 </body>
