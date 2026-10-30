@@ -496,17 +496,20 @@
     </div>
 
     <div class="side-card" style="margin-top:20px;">
-      <h4>Meteo previsto — novembre, zona per zona</h4>
-      <table style="width:100%; font-size:.92rem;">
-        <tr><th>Zona</th><th>Temperature</th><th>Note</th></tr>
-        <tr><td>Tokyo</td><td>9° – 17°C</td><td>Giornate miti, sere fresche; piogge non frequenti</td></tr>
-        <tr><td>Hakone / Monte Fuji</td><td>5° – 15°C</td><td>Più fresco per l'altitudine, escursione termica marcata</td></tr>
-        <tr><td>Kyoto</td><td>7° – 16°C</td><td>Aria secca, cielo spesso terso, foliage autunnale</td></tr>
-        <tr><td>Kumano Kodo / Wakayama</td><td>8° – 17°C</td><td>Simile a Osaka in costa, più fresco e umido in quota durante il trekking</td></tr>
-        <tr><td>Ise</td><td>8° – 17°C</td><td>Mite, clima costiero</td></tr>
-        <tr><td>Osaka</td><td>10° – 18°C</td><td>Il più mite delle tappe, piogge occasionali</td></tr>
-      </table>
-      <p class="day-sub" style="margin-top:10px; font-size:.85rem;">Novembre è stagione secca e fresca in Giappone (non esiste una vera "stagione delle piogge" in questo periodo); le sere richiedono comunque una giacca.</p>
+      <h4>Confronto meteo — fasce del sito e stime aggiornate per il viaggio</h4>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; min-width:560px; font-size:.92rem; border-collapse:collapse;">
+          <thead><tr><th style="text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);">Zona</th><th style="text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);">Sito attuale</th><th style="text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);">Stima aggiornata per il viaggio</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:9px 8px;border-bottom:1px solid var(--line);">Tokyo</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">9–17°C</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">15–18°C il 7/11; 13–15°C l’8/11</td></tr>
+            <tr><td style="padding:9px 8px;border-bottom:1px solid var(--line);">Hakone</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">5–15°C</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">Circa 11–13°C di massima e 6–9°C di minima intorno al 10/11</td></tr>
+            <tr><td style="padding:9px 8px;border-bottom:1px solid var(--line);">Kyoto</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">7–16°C</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">14–18°C il 7/11; 15–18°C l’8/11</td></tr>
+            <tr><td style="padding:9px 8px;border-bottom:1px solid var(--line);">Kumano / Wakayama</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">8–17°C</td><td style="padding:9px 8px;border-bottom:1px solid var(--line);">Circa 20°C di massima e 7–10°C di minima nelle stime per il 13/11</td></tr>
+            <tr><td style="padding:9px 8px;">Osaka</td><td style="padding:9px 8px;">10–18°C</td><td style="padding:9px 8px;">Circa 12–19°C nella seconda settimana</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="day-sub" style="margin-top:10px;font-size:.85rem;">Le fasce del sito sono valori climatici indicativi; le stime aggiornate sono previsioni per le date del viaggio e possono cambiare. Ricontrollare il meteo a ridosso della partenza, soprattutto per le escursioni.</p>
     </div>
 
     <div class="side-card" style="margin-top:20px;">
@@ -704,7 +707,7 @@ const DAYS = [
     schedule:[
       ["🎒 MATERIALE PER L’ESCURSIONE",`<div class="trekking-kit-box">
         <h3>🎒 Cosa portare per il Kumano Kodo</h3>
-        <div class="kit-weather">🌦️ Clima variabile: circa 11°C al mattino, oltre 20°C nelle ore più miti; possibili piogge</div>
+        <div class="kit-weather">🌦️ Stima per il 13/11: minima 7–10°C e massima intorno a 20°C; possibili piogge</div>
         <p class="kit-intro">Vestirsi a strati e prepararsi a sentieri umidi o scivolosi. Evitare il cotone, che asciuga lentamente.</p>
         <h4>🧥 Abbigliamento a strati</h4>
         <ul>
