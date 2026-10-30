@@ -330,6 +330,11 @@
   .packing-footnote{margin:18px 0 8px;padding:12px 14px;border-radius:10px;background:rgba(217,164,65,.12);color:#6b4d10;font-size:13px;line-height:1.55;}
   .packing-reset{margin-top:8px;padding:9px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text-soft);font:600 12px inherit;cursor:pointer;}
   .packing-reset:hover{border-color:var(--coral);color:var(--coral-deep);}
+  .packing-person-picker{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 4px;padding:14px 16px;border:1px solid rgba(47,143,107,.22);border-radius:12px;background:#f5faf7;}
+  .packing-person-picker label{font-size:13px;font-weight:800;color:var(--navy);}
+  .packing-person-picker select{min-width:220px;max-width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);font:600 14px inherit;}
+  .packing-person-hint{flex-basis:100%;margin:0;color:var(--text-soft);font-size:12px;line-height:1.45;}
+  .packing-locked{opacity:.58;}
   @media(max-width:640px){.packing-section{padding:15px}.packing-grid{grid-template-columns:1fr}.packing-heading-row h3{font-size:22px}.packing-count{padding:7px 10px}.packing-card{padding:14px}.packing-list li{font-size:14px}}
 
   /* CHECKLIST */
@@ -551,6 +556,18 @@
           <h3 id="packing-heading">La valigia per il Giappone</h3>
           <p class="day-sub">Checklist per il viaggio 7–17 novembre 2026, con abbigliamento per le città e attrezzatura per il Kumano Kodo. Spunta ogni elemento mentre prepari il bagaglio.</p>
         </div>
+      <div class="packing-person-picker">
+        <label for="packingPerson">La tua lista personale</label>
+        <select id="packingPerson" aria-label="Seleziona il partecipante">
+          <option value="">Seleziona il tuo nome…</option>
+          <option value="alessio">Alessio</option>
+          <option value="melania">Melania</option>
+          <option value="sara-rhouddani">Sara Rhouddani</option>
+          <option value="danilo-barretta">Danilo Barretta</option>
+          <option value="giorgio-gallo">Giorgio Gallo</option>
+        </select>
+        <p class="packing-person-hint">Le spunte vengono salvate separatamente per ogni partecipante su questo dispositivo e browser. Seleziona sempre il tuo nome prima di modificare la lista.</p>
+      </div>
         <div class="packing-count" aria-live="polite"><strong id="packingDone">0</strong><span> / <span id="packingTotal">0</span> preparati</span></div>
       </div>
       <div class="packing-progress" role="progressbar" aria-label="Avanzamento preparazione valigia" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="packingProgress"><span id="packingProgressBar"></span></div>
@@ -1165,41 +1182,63 @@ function selectTab(id){
   window.scrollTo({top: document.querySelector('.tabs-wrap').offsetTop, behavior:'smooth'});
 }
   
-// Checklist valigia: spunte salvate su questo dispositivo e avanzamento aggiornato.
+// Checklist valigia personale: ogni partecipante ha uno spazio di salvataggio distinto.
 (function initPackingChecklist(){
   const boxes = Array.from(document.querySelectorAll('[data-packing-check]'));
-  const storageKey = 'giappone-zen-packing-2026-v1';
+  const personSelect = document.getElementById('packingPerson');
+  const storagePrefix = 'giappone-zen-packing-2026-person-';
   const doneEl = document.getElementById('packingDone');
   const totalEl = document.getElementById('packingTotal');
   const bar = document.getElementById('packingProgressBar');
   const progress = document.getElementById('packingProgress');
   const reset = document.getElementById('packingReset');
-  if (!boxes.length || !doneEl || !totalEl || !bar || !progress) return;
-  let saved = {};
-  try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch(e) {}
-  boxes.forEach((box,index) => {
-    box.checked = Boolean(saved[index]);
-    box.addEventListener('change', () => {
-      const state = {};
-      boxes.forEach((item,i) => { state[i] = item.checked; });
-      try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch(e) {}
-      updatePackingProgress();
-    });
-  });
+  const section = document.querySelector('.packing-section');
+  if (!boxes.length || !personSelect || !doneEl || !totalEl || !bar || !progress) return;
+
+  let activePerson = '';
   function updatePackingProgress(){
     const done = boxes.filter(box => box.checked).length;
-    const percent = Math.round(done / boxes.length * 100);
+    const percent = boxes.length ? Math.round(done / boxes.length * 100) : 0;
     doneEl.textContent = done;
     totalEl.textContent = boxes.length;
     bar.style.width = percent + '%';
     progress.setAttribute('aria-valuenow', String(percent));
   }
+  function saveCurrentPerson(){
+    if (!activePerson) return;
+    const state = {};
+    boxes.forEach((item,i) => { state[i] = item.checked; });
+    try { localStorage.setItem(storagePrefix + activePerson, JSON.stringify(state)); } catch(e) {}
+  }
+  function loadPerson(person){
+    activePerson = person;
+    boxes.forEach((box,index) => {
+      let saved = {};
+      if (person) {
+        try { saved = JSON.parse(localStorage.getItem(storagePrefix + person) || '{}') || {}; } catch(e) {}
+      }
+      box.checked = Boolean(saved[index]);
+      box.disabled = !person;
+    });
+    if (reset) reset.disabled = !person;
+    if (section) section.classList.toggle('packing-locked', !person);
+    updatePackingProgress();
+  }
+  boxes.forEach(box => {
+    box.disabled = true;
+    box.addEventListener('change', () => {
+      saveCurrentPerson();
+      updatePackingProgress();
+    });
+  });
+  personSelect.addEventListener('change', () => loadPerson(personSelect.value));
   if (reset) reset.addEventListener('click', () => {
+    if (!activePerson) return;
     boxes.forEach(box => { box.checked = false; });
-    try { localStorage.removeItem(storageKey); } catch(e) {}
+    saveCurrentPerson();
     updatePackingProgress();
   });
-  updatePackingProgress();
+  loadPerson('');
 })();
 
 </script>
