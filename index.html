@@ -774,6 +774,26 @@ const DAYS = [
   },
   {
     id:3, date:"9 novembre", dest:"Monte Takao", focus:"Monte Takao con guida privata, poi Shinjuku", intro:"Si lascia il ritmo della metropoli per i sentieri del Monte Takao, accompagnati da una guida privata. Tra funivia, tempio Yakuō-in e panorama dalla vetta, si respira un lato più verde del Giappone; nel pomeriggio si torna a Shinjuku per cena e tour serale.", map:"Mount Takao, Hachioji, Tokyo, Japan",
+    instructions:`<div class="side-card takao-instructions" style="margin:20px 0;border:2px solid #2F8F6B;background:#F0F8F4;padding:22px;border-radius:16px;">
+      <h3 style="font-family:Georgia,serif;color:#0F2A3D;margin:0 0 16px;">🥾 Informazioni importanti — Tour del Monte Takao</h3>
+      <h4>1. Punto di ritrovo · ore 9:00</h4>
+      <p>La guida vi aspetterà all'uscita della stazione di <strong>Takaosanguchi</strong> (linea Keio) alle <strong>9:00</strong>. Il personale sarà riconoscibile da un cartello o una bandiera con il logo <strong>“TENGU”</strong>: cercate questo segno per individuare il gruppo.</p>
+      <h4>2. Itinerario e programma</h4>
+      <p>La salita inizierà con la <strong>funicolare</strong>; da lì proseguiremo a piedi verso il tempio <strong>Yakuō-in</strong> e la cima del Monte Takao, visitando diversi punti di interesse lungo il percorso. Dalla vetta, se le condizioni meteorologiche lo permetteranno, potremo ammirare il <strong>Monte Fuji</strong>.</p>
+      <p>Dopo il pranzo in cima inizieremo la discesa seguendo un itinerario in parte diverso da quello dell'andata, fino alla <strong>seggiovia</strong>. Da lì si potrà ammirare il panorama sulle montagne circostanti e sulla città di Hachioji.</p>
+      <p><strong>Attenzione:</strong> comunicate in anticipo alla guida eventuali difficoltà nell'utilizzo della seggiovia, ad esempio in caso di vertigini o acrofobia.</p>
+      <p>Le guide potranno modificare il programma in base alle condizioni del momento oppure alle vostre richieste, prima o durante il tour. Il rientro è previsto alla stazione di <strong>Takaosanguchi</strong>, punto di partenza, intorno alle <strong>14:00</strong>.</p>
+      <h4>3. Pranzo e bevande</h4>
+      <p>Portate con voi <strong>pranzo e bevande</strong>. È presente anche un chiosco (<strong>KIOSK</strong>) proprio all'esterno della stazione di Takaosanguchi, dove è possibile acquistare qualcosa prima di iniziare.</p>
+      <h4>4. Biglietto scontato Monte Takao · linea Keio + funicolare/seggiovia</h4>
+      <p>Per il tragitto è previsto l'utilizzo della funicolare o della seggiovia sia all'andata sia al ritorno. È possibile acquistare presso qualsiasi stazione della linea Keio un <strong>biglietto combinato scontato del 20%</strong>, che comprende il viaggio sulla linea Keio e il trasporto di salita/discesa sul Monte Takao. Verificate le condizioni e le modalità aggiornate prima dell'acquisto.</p>
+      <ul>
+        <li><a href="http://www.keio.co.jp/english/tickets/discount.html" target="_blank" rel="noopener">Informazioni sul biglietto scontato ↗</a></li>
+        <li><a href="http://www.keio.co.jp/english/tickets/pdf/discount_mttakao.pdf" target="_blank" rel="noopener">Istruzioni per l'acquisto (PDF) ↗</a></li>
+      </ul>
+      <h4>5. Abbigliamento e scarpe</h4>
+      <p>In montagna la temperatura può essere molto bassa: vestitevi adeguatamente, preferendo abbigliamento a strati e una giacca calda. I sentieri possono essere scivolosi: indossate <strong>scarpe adatte all'escursionismo</strong>, con suola stabile e antiscivolo. <strong>Niente tacchi alti</strong> o calzature non adatte ai sentieri.</p>
+    </div>`,
     schedule:[
       ["07:30–08:00","🚉 Hotel → Shinjuku: Suica pronta, obiettivo arrivare alla zona Keio con margine. <a href='https://www.google.com/maps/search/?api=1&query=Keio+Shinjuku+Station+Tokyo' target='_blank' rel='noopener'>📍 Keio Shinjuku</a>"],
       ["08:10–09:05","🚆 Shinjuku → Takaosanguchi (Keio Line), soluzione diretta/rapida più comoda. <a href='https://www.google.com/maps/dir/?api=1&origin=Keio+Shinjuku+Station,+Tokyo,+Japan&destination=Takaosanguchi+Station,+Tokyo,+Japan&travelmode=transit' target='_blank' rel='noopener'>🚆 Apri tragitto</a>"],
@@ -1153,6 +1173,8 @@ dayPanelsEl.innerHTML = DAYS.map((d,idx)=>{
     <div class="day-intro-box"><span class="intro-label">La giornata in breve</span><p>${d.intro}</p></div>
 
     ${(() => { const hotel = HOTEL_STAYS.find(h => h.days.includes(d.id)); return hotel ? `<a class="hotel-stay-card" href="${hotel.url}" target="_blank" rel="noopener" aria-label="Apri ${hotel.name} su Google Maps"><span class="hotel-stay-label">🏨 HOTEL DELLA NOTTE · APRI GOOGLE MAPS ↗</span><strong>${hotel.name}</strong><span class="hotel-stay-date">${hotel.dates}</span></a>` : ""; })()}
+
+    ${d.instructions || ""}
 
     <div class="grid">
       <div>
